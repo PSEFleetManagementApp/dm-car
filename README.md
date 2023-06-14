@@ -1,8 +1,7 @@
 # 3.MicroserviceEngineering
 
 1. Execute main.go
-2. Call POST localhost:8080/cars to create a new car. Example Payload:
-<code>
+2. Call POST localhost:8080/cars to create a new car. Example Payload:<code>
 {
    "vin": "1",
    "brand": "Mercedes Benz",
