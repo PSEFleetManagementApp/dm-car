@@ -2,20 +2,21 @@ package main
 
 import (
 	"car/DM-Car/src/api/controller"
+	"car/DM-Car/src/api/stubs"
 	"car/DM-Car/src/infrastructure"
 	"car/DM-Car/src/logic/operations"
-	"log"
-	"net/http"
+	"flag"
+	"fmt"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
 	carOperations := operations.NewCarOperations(infrastructure.NewCarRepository())
-	carCollectionResource := controller.NewCarCollectionResource(carOperations)
+	carCollectionResource := controller.NewCarController(carOperations)
 
-	http.HandleFunc("/car", carCollectionResource.HandleAddCar)
-	http.HandleFunc("/car/", carCollectionResource.HandleGetCar)
-	err := http.ListenAndServe("localhost:8080", nil)
-	if err != nil {
-		log.Fatalf("System failed to listen and serve car collection resource: %v", err)
-	}
+	e := echo.New()
+	stubs.RegisterHandlers(e, &carCollectionResource)
+
+	var port = flag.Int("port", 8080, "Port for local server")
+	e.Logger.Fatal(e.Start(fmt.Sprintf("0.0.0.0:%d", *port)))
 }
