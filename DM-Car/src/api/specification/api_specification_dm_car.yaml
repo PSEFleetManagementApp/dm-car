@@ -1,0 +1,81 @@
+openapi: 3.0.1
+info:
+  title: API Specification DM-Car
+  description: Specify the endpoints provided by DM-Car. These endpoints provide basic functionalities such as creating, deleting, and retrieving a Car.
+  version: 1.0.0
+tags:
+  - name: Car Collection
+paths:
+  /car:
+    post:
+      summary: Add a new car
+      tags:
+        - Car Collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vin:
+                  $ref: '#/components/schemas/vin'
+                brand:
+                  $ref: '#/components/schemas/brand'
+                model:
+                  $ref: '#/components/schemas/model'
+
+      responses:
+        '200':
+          description: A new car with the given properties is created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/car'
+
+  /car/{vin}:
+    get:
+      summary: Retrieve an existing car
+      tags:
+        - Car Collection
+      parameters:
+        - in: path
+          name: vin
+          schema:
+            $ref: '#/components/schemas/vin'
+          required: true
+          description: Identifier of a Car
+
+      responses:
+        '200':
+          description: The car with the provided vin is retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/car'
+        '404':
+          description: No car with the provided vin exists.
+
+components:
+  schemas:
+    vin:
+      type: string
+      description: Identifier of a Car
+      format: uuid
+    brand:
+      type: string
+      description: Brand of a Car
+      example: Mercedes
+    model:
+      type: string
+      description: Model of a Car
+      example: A-Class
+    car:
+      type: object
+      properties:
+        vin:
+          $ref: '#/components/schemas/vin'
+        brand:
+          $ref: '#/components/schemas/brand'
+        model:
+          $ref: '#/components/schemas/model'
