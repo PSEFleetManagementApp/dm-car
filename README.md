@@ -2,7 +2,7 @@
 
 ## API Diagram DM-Car
 
-[API Diagram](pages/api_diagram_dm_car.png)
+[API Diagram](pages/api_diagram_dm_car.md)
 
 ## API Specification DM-Car
 
