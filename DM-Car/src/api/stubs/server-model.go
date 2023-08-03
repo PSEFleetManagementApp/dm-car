@@ -7,38 +7,20 @@ import (
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
 
-// Brand Brand of a Car
-type Brand = string
-
 // Car defines model for car.
 type Car struct {
 	// Brand Brand of a Car
-	Brand *Brand `json:"brand,omitempty"`
+	Brand *string `json:"brand,omitempty"`
 
 	// Model Model of a Car
-	Model *Model `json:"model,omitempty"`
+	Model *string `json:"model,omitempty"`
 
 	// Vin Identifier of a Car
 	Vin *Vin `json:"vin,omitempty"`
 }
-
-// Model Model of a Car
-type Model = string
 
 // Vin Identifier of a Car
 type Vin = openapi_types.UUID
 
-// PostCarJSONBody defines parameters for PostCar.
-type PostCarJSONBody struct {
-	// Brand Brand of a Car
-	Brand *Brand `json:"brand,omitempty"`
-
-	// Model Model of a Car
-	Model *Model `json:"model,omitempty"`
-
-	// Vin Identifier of a Car
-	Vin *Vin `json:"vin,omitempty"`
-}
-
 // PostCarJSONRequestBody defines body for PostCar for application/json ContentType.
-type PostCarJSONRequestBody PostCarJSONBody
+type PostCarJSONRequestBody = Car

@@ -13,6 +13,9 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Retrieve all existing cars
+	// (GET /car)
+	GetCar(ctx echo.Context) error
 	// Add a new car
 	// (POST /car)
 	PostCar(ctx echo.Context) error
@@ -24,6 +27,15 @@ type ServerInterface interface {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// GetCar converts echo context to params.
+func (w *ServerInterfaceWrapper) GetCar(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetCar(ctx)
+	return err
 }
 
 // PostCar converts echo context to params.
@@ -79,6 +91,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.GET(baseURL+"/car", wrapper.GetCar)
 	router.POST(baseURL+"/car", wrapper.PostCar)
 	router.GET(baseURL+"/car/:vin", wrapper.GetCarVin)
 
