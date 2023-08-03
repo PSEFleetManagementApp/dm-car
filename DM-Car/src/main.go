@@ -12,10 +12,10 @@ import (
 
 func main() {
 	carOperations := operations.NewCarOperations(infrastructure.NewCarRepository())
-	carCollectionResource := controller.NewCarController(carOperations)
+	carsResource := controller.NewCarController(carOperations)
 
 	e := echo.New()
-	stubs.RegisterHandlers(e, &carCollectionResource)
+	stubs.RegisterHandlers(e, &carsResource)
 
 	var port = flag.Int("port", 8080, "Port for local server")
 	e.Logger.Fatal(e.Start(fmt.Sprintf("0.0.0.0:%d", *port)))

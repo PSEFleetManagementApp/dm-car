@@ -1,5 +1,5 @@
 package model
 
-type CarCollection struct {
+type Cars struct {
 	Cars []Car
 }
