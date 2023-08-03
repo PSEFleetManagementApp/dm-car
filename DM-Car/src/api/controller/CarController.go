@@ -36,6 +36,14 @@ func (resource CarController) PostCar(ctx echo.Context) error {
 	return nil
 }
 
+func (resource CarController) GetCar(ctx echo.Context) error {
+	cars, err := resource.ops.GetCars()
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(http.StatusOK, cars)
+}
+
 func (resource CarController) GetCarVin(ctx echo.Context, vin stubs.Vin) error {
 	car, err := resource.ops.GetCar(vin.String())
 	if err != nil {

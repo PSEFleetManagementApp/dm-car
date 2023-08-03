@@ -27,6 +27,14 @@ func (repository *CarRepository) Save(car model.Car) error {
 	return nil
 }
 
+func (repository *CarRepository) FindAll() ([]model.Car, error) {
+	var result []model.Car
+	for i := range repository.Cars {
+		result = append(result, *mappers.ConvertCarPersistenceEntityToCar(repository.Cars[i]))
+	}
+	return result, nil
+}
+
 func (repository *CarRepository) FindByVin(vin string) (*model.Car, error) {
 	for i := range repository.Cars {
 		if repository.Cars[i].Vin == vin {
