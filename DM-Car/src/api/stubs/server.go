@@ -91,8 +91,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/car", wrapper.GetCar)
-	router.POST(baseURL+"/car", wrapper.PostCar)
-	router.GET(baseURL+"/car/:vin", wrapper.GetCarVin)
+	router.GET(baseURL+"/cars", wrapper.GetCar)
+	router.POST(baseURL+"/cars", wrapper.PostCar)
+	router.GET(baseURL+"/cars/:vin", wrapper.GetCarVin)
 
 }
