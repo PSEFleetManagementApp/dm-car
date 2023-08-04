@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: API Specification DM-Car
-  description: Specify the endpoints provided by DM-Car. These endpoints provide basic functionalities such as creating and retrieving a car.
+  description: Specifies the endpoints provided by DM-Car. These endpoints provide basic functionalities such as creating and retrieving a car.
   version: 1.0.1
 tags:
   - name: Cars
