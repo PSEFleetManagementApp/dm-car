@@ -64,12 +64,9 @@ paths:
 components:
   schemas:
     vin:
-      type: object
-      properties:
-        vin:
-          type: string
-          description: Identifier of a car
-          format: uuid
+      type: string
+      description: Identifier of a car
+      format: uuid
     car:
       type: object
       properties:
