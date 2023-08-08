@@ -6,7 +6,7 @@ import (
 
 func (ops CarOperations) AddCar(vin string, brand string, carModel string) (model.Car, error) {
 	car := model.Car{
-		Vin:   vin,
+		Vin:   model.Vin{Vin: vin},
 		Brand: brand,
 		Model: carModel,
 	}
