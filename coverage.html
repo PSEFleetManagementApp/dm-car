@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>controller: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">car/DM-Car/src/api/controller/CarController.go (75.0%)</option>
+				
+				<option value="file1">car/DM-Car/src/infrastructure/CarRepository.go (61.1%)</option>
+				
+				<option value="file2">car/DM-Car/src/infrastructure/DatabaseConnection.go (53.2%)</option>
+				
+				<option value="file3">car/DM-Car/src/infrastructure/mappers/CarMapper.go (100.0%)</option>
+				
+				<option value="file4">car/DM-Car/src/logic/operations/AddCarOperation.go (80.0%)</option>
+				
+				<option value="file5">car/DM-Car/src/logic/operations/CarOperations.go (100.0%)</option>
+				
+				<option value="file6">car/DM-Car/src/logic/operations/GetCarOperation.go (75.0%)</option>
+				
+				<option value="file7">car/DM-Car/src/logic/operations/GetCarsOperation.go (75.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package controller
+
+import (
+        "car/DM-Car/src/api/stubs"
+        "car/DM-Car/src/logic/operations"
+        "github.com/labstack/echo/v4"
+        "net/http"
+)
+
+type CarController struct {
+        ops operations.CarOperationsInterface
+}
+
+func NewCarController(ops operations.CarOperations) CarController <span class="cov8" title="1">{
+        return CarController{ops: ops}
+}</span>
+
+func (resource CarController) PostCar(ctx echo.Context) error <span class="cov8" title="1">{
+        var payload stubs.PostCarJSONRequestBody
+
+        err := ctx.Bind(&amp;payload)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">car, err := resource.ops.AddCar(payload.Vin.String(), *payload.Brand, *payload.Model)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">err = ctx.JSON(http.StatusOK, car)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (resource CarController) GetCar(ctx echo.Context) error <span class="cov8" title="1">{
+        cars, err := resource.ops.GetCars()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return ctx.JSON(http.StatusOK, cars)</span>
+}
+
+func (resource CarController) GetCarVin(ctx echo.Context, vin stubs.Vin) error <span class="cov8" title="1">{
+        car, err := resource.ops.GetCar(vin.String())
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return ctx.JSON(http.StatusOK, car)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package infrastructure
+
+import (
+        "car/DM-Car/src/infrastructure/mappers"
+        "car/DM-Car/src/logic/model"
+)
+
+type CarRepository struct {
+        connection DatabaseConnection
+}
+
+func NewCarRepository() *CarRepository <span class="cov0" title="0">{
+        connection, err := CreateDatabaseConnection()
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov0" title="0">return &amp;CarRepository{connection}</span>
+}
+
+func (repository *CarRepository) Save(car model.Car) error <span class="cov8" title="1">{
+        carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
+        return repository.connection.Save(carPersistenceEntity)
+}</span>
+
+func (repository *CarRepository) FindAll() ([]model.Car, error) <span class="cov8" title="1">{
+        cars, err := repository.connection.FindAll()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">var result []model.Car
+        for i := range cars </span><span class="cov8" title="1">{
+                result = append(result, mappers.ConvertCarPersistenceEntityToCar(cars[i]))
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (repository *CarRepository) FindByVin(vin string) (model.Car, error) <span class="cov8" title="1">{
+        car, err := repository.connection.FindByVin(vin)
+        if err != nil </span><span class="cov0" title="0">{
+                return model.Car{}, err
+        }</span>
+        <span class="cov8" title="1">return mappers.ConvertCarPersistenceEntityToCar(car), nil</span>
+}
+
+func (repository *CarRepository) Close() error <span class="cov0" title="0">{
+        return repository.connection.Close()
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package infrastructure
+
+import (
+        "car/DM-Car/src/infrastructure/entities"
+        "context"
+        "database/sql"
+        "errors"
+        "fmt"
+        "os"
+
+        "github.com/jackc/pgconn"
+        "github.com/jackc/pgx/v4"
+        _ "github.com/lib/pq"
+)
+
+type PGXInterface interface {
+        Ping(ctx context.Context) error
+        Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+        Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
+        QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+        Close(ctx context.Context) error
+}
+
+type DatabaseConnection struct {
+        connection PGXInterface
+}
+
+func CreateDatabaseConnection() (DatabaseConnection, error) <span class="cov0" title="0">{
+        url, err := getDatabaseURL()
+        if err != nil </span><span class="cov0" title="0">{
+                return DatabaseConnection{}, err
+        }</span>
+        <span class="cov0" title="0">connection, err := pgx.Connect(context.Background(), url)
+        if err != nil </span><span class="cov0" title="0">{
+                return DatabaseConnection{}, err
+        }</span>
+        <span class="cov0" title="0">err = connection.Ping(context.Background())
+        if err != nil </span><span class="cov0" title="0">{
+                return DatabaseConnection{}, err
+        }</span>
+        <span class="cov0" title="0">return DatabaseConnection{connection}, nil</span>
+}
+
+func getDatabaseURL() (string, error) <span class="cov0" title="0">{
+        host := os.Getenv("DB_HOST")
+        port := os.Getenv("DB_PORT")
+        user := os.Getenv("DB_USER")
+        password := os.Getenv("DB_PASSWORD")
+        dbname := os.Getenv("DB_NAME")
+
+        return fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, dbname), nil
+}</span>
+
+func (connection *DatabaseConnection) Close() error <span class="cov0" title="0">{
+        return connection.connection.Close(context.Background())
+}</span>
+
+func (connection *DatabaseConnection) Save(car entities.CarPersistenceEntity) error <span class="cov8" title="1">{
+        statement := fmt.Sprintf(`
+        INSERT INTO public."Car" (vin, brand, model)
+        VALUES ('%s', '%s', '%s')
+`, car.Vin.Vin, car.Brand, car.Model)
+        _, err := connection.connection.Exec(context.Background(), statement)
+        return err
+}</span>
+
+func (connection *DatabaseConnection) FindAll() ([]entities.CarPersistenceEntity, error) <span class="cov8" title="1">{
+        statement := `
+                SELECT *
+                FROM public."Car"
+        `
+        rows, err := connection.connection.Query(context.Background(), statement)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">defer rows.Close()
+        cars := []entities.CarPersistenceEntity{}
+        for rows.Next() </span><span class="cov8" title="1">{
+                car := entities.CarPersistenceEntity{}
+                vin := entities.Vin{}
+                err = rows.Scan(&amp;vin.Vin, &amp;car.Brand, &amp;car.Model)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">car.Vin = vin
+                cars = append(cars, car)</span>
+        }
+        <span class="cov8" title="1">err = rows.Err()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return cars, nil</span>
+}
+
+func (connection *DatabaseConnection) FindByVin(vin string) (entities.CarPersistenceEntity, error) <span class="cov8" title="1">{
+        car := entities.CarPersistenceEntity{}
+        vinObject := entities.Vin{}
+        statement := fmt.Sprintf(`
+        SELECT *
+        FROM public."Car"
+        WHERE vin LIKE '%s'
+`, vin)
+        row := connection.connection.QueryRow(context.Background(), statement)
+        switch err := row.Scan(&amp;vinObject.Vin, &amp;car.Model, &amp;car.Brand); err </span>{
+        case sql.ErrNoRows:<span class="cov0" title="0">
+                return entities.CarPersistenceEntity{}, errors.New("no car has the specified VIN")</span>
+        case nil:<span class="cov8" title="1">
+                car.Vin = vinObject
+                return car, nil</span>
+        default:<span class="cov0" title="0">
+                return entities.CarPersistenceEntity{}, errors.New("DatabaseConnection.FindByVin: Unknown error")</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package mappers
+
+import (
+        "car/DM-Car/src/infrastructure/entities"
+        "car/DM-Car/src/logic/model"
+)
+
+func ConvertCarToCarPersistenceEntity(car model.Car) entities.CarPersistenceEntity <span class="cov8" title="1">{
+        return entities.CarPersistenceEntity{
+                Vin:   entities.Vin{Vin: car.Vin.Vin},
+                Brand: car.Brand,
+                Model: car.Model,
+        }
+}</span>
+
+func ConvertCarPersistenceEntityToCar(carPersistenceEntity entities.CarPersistenceEntity) model.Car <span class="cov8" title="1">{
+        return model.Car{
+                Vin:   model.Vin{Vin: carPersistenceEntity.Vin.Vin},
+                Brand: carPersistenceEntity.Brand,
+                Model: carPersistenceEntity.Model,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package operations
+
+import (
+        "car/DM-Car/src/logic/model"
+)
+
+func (ops CarOperations) AddCar(vin string, brand string, carModel string) (model.Car, error) <span class="cov8" title="1">{
+        car := model.Car{
+                Vin:   model.Vin{Vin: vin},
+                Brand: brand,
+                Model: carModel,
+        }
+
+        err := ops.repository.Save(car)
+        if err != nil </span><span class="cov0" title="0">{
+                return model.Car{}, err
+        }</span>
+
+        <span class="cov8" title="1">return car, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package operations
+
+import "car/DM-Car/src/logic/model"
+
+type CarOperations struct {
+        repository model.CarRepositoryInterface
+}
+
+func NewCarOperations(repository model.CarRepositoryInterface) CarOperations <span class="cov8" title="1">{
+        return CarOperations{repository: repository}
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package operations
+
+import "car/DM-Car/src/logic/model"
+
+func (ops CarOperations) GetCar(vin string) (model.Car, error) <span class="cov8" title="1">{
+        car, err := ops.repository.FindByVin(vin)
+        if err != nil </span><span class="cov0" title="0">{
+                return model.Car{}, err
+        }</span>
+
+        <span class="cov8" title="1">return car, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package operations
+
+import "car/DM-Car/src/logic/model"
+
+func (ops CarOperations) GetCars() ([]model.Car, error) <span class="cov8" title="1">{
+        cars, err := ops.repository.FindAll()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return cars, nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

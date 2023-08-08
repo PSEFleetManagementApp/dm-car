@@ -44,3 +44,9 @@ DB_NAME // Name of the database
 ```
 4. Call GET localhost:PORT/cars/<vin> to retrieve created car. Example Vin <code>JH4DA3350KS009715</code>
 5. Call GET localhost:PORT/cars to retrieve all created cars.
+
+## Run Tests
+
+1. Execute `go test -coverprofile=coverage.out -v ./...`
+2. Execute `go tool cover -html=coverage.out -o coverage.html`
+3. Open the created HTML file to see a coverage report
