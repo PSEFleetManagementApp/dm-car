@@ -7,11 +7,15 @@ import (
 	"car/DM-Car/src/logic/operations"
 	"flag"
 	"fmt"
+
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	carOperations := operations.NewCarOperations(infrastructure.NewCarRepository())
+	carRepository := infrastructure.NewCarRepository()
+	defer carRepository.Close()
+
+	carOperations := operations.NewCarOperations(carRepository)
 	carsResource := controller.NewCarController(carOperations)
 
 	e := echo.New()

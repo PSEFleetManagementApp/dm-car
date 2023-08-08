@@ -12,6 +12,29 @@
 
 [Generate API Controller Stubs from API Specification](pages/guideline_generate_go_api_controller_stubs_from_api_specification.md)
 
+## Setting up the database and the connection to it
+
+1. Run this inside of a Postgres database:
+```sql
+CREATE TABLE IF NOT EXISTS public."Car"
+(
+    vin character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    brand character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    model character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Car_pkey" PRIMARY KEY (vin)
+)
+```
+
+2. Create the following environment variables for DM-Car:
+```env
+DB_HOST // Address of the database
+DB_PORT // Port of the database
+DB_USER // User to access the database
+DB_PASSWORD // Password of the database user
+DB_NAME // Name of the database
+DB_SSLMODE // SSL Mode can be one of the following: "require" (default), "verify-full", "verify-ca", and "disable"
+```
+
 ## Run DM-Car
 
 1. Execute main.go
