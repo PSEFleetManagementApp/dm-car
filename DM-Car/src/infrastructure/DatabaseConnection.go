@@ -74,7 +74,7 @@ func (connection *DatabaseConnection) Save(car entities.CarPersistenceEntity) er
 	statement := fmt.Sprintf(`
 	INSERT INTO public."Car" (vin, brand, model)
 	VALUES ('%s', '%s', '%s')
-`, car.Vin, car.Brand, car.Model)
+`, car.Vin.Vin, car.Brand, car.Model)
 	_, err := connection.db.Exec(statement)
 	return err
 }
@@ -92,10 +92,12 @@ func (connection *DatabaseConnection) FindAll() ([]entities.CarPersistenceEntity
 	cars := []entities.CarPersistenceEntity{}
 	for rows.Next() {
 		car := entities.CarPersistenceEntity{}
-		err = rows.Scan(&car.Vin, &car.Brand, &car.Model)
+		vin := entities.Vin{}
+		err = rows.Scan(&vin.Vin, &car.Brand, &car.Model)
 		if err != nil {
 			return nil, err
 		}
+		car.Vin = vin
 		cars = append(cars, car)
 	}
 	err = rows.Err()
@@ -107,16 +109,18 @@ func (connection *DatabaseConnection) FindAll() ([]entities.CarPersistenceEntity
 
 func (connection *DatabaseConnection) FindByVin(vin string) (entities.CarPersistenceEntity, error) {
 	car := entities.CarPersistenceEntity{}
+	vinObject := entities.Vin{}
 	statement := fmt.Sprintf(`
 	SELECT *
 	FROM public."Car"
 	WHERE vin LIKE '%s'
 `, vin)
 	row := connection.db.QueryRow(statement)
-	switch err := row.Scan(&car.Vin, &car.Model, &car.Brand); err {
+	switch err := row.Scan(&vinObject.Vin, &car.Model, &car.Brand); err {
 	case sql.ErrNoRows:
 		return entities.CarPersistenceEntity{}, errors.New("no car has the specified VIN")
 	case nil:
+		car.Vin = vinObject
 		return car, nil
 	default:
 		return entities.CarPersistenceEntity{}, errors.New("DatabaseConnection.FindByVin: Unknown error")

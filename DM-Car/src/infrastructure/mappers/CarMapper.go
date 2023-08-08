@@ -7,7 +7,7 @@ import (
 
 func ConvertCarToCarPersistenceEntity(car model.Car) entities.CarPersistenceEntity {
 	return entities.CarPersistenceEntity{
-		Vin:   car.Vin,
+		Vin:   entities.Vin{Vin: car.Vin.Vin},
 		Brand: car.Brand,
 		Model: car.Model,
 	}
@@ -15,7 +15,7 @@ func ConvertCarToCarPersistenceEntity(car model.Car) entities.CarPersistenceEnti
 
 func ConvertCarPersistenceEntityToCar(carPersistenceEntity entities.CarPersistenceEntity) model.Car {
 	return model.Car{
-		Vin:   carPersistenceEntity.Vin,
+		Vin:   model.Vin{Vin: carPersistenceEntity.Vin.Vin},
 		Brand: carPersistenceEntity.Brand,
 		Model: carPersistenceEntity.Model,
 	}

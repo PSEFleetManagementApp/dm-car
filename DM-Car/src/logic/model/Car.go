@@ -1,7 +1,7 @@
 package model
 
 type Car struct {
-	Vin   string
+	Vin   Vin
 	Brand string
 	Model string
 }
