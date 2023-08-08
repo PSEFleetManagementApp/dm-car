@@ -2,72 +2,57 @@ package infrastructure
 
 import (
 	"car/DM-Car/src/infrastructure/entities"
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v4"
 	_ "github.com/lib/pq"
 )
 
-type DatabaseConnectionInfo struct {
-	host     string
-	port     uint16
-	user     string
-	password string
-	dbname   string
-	sslmode  string
+type PGXInterface interface {
+	Ping(ctx context.Context) error
+	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
+	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+	Close(ctx context.Context) error
 }
 
 type DatabaseConnection struct {
-	db *sql.DB
+	connection PGXInterface
 }
 
 func CreateDatabaseConnection() (DatabaseConnection, error) {
-	info, err := getDatabaseConnectionInfo()
+	url, err := getDatabaseURL()
 	if err != nil {
 		return DatabaseConnection{}, err
 	}
-	connectionString := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=%s",
-		info.host, info.port, info.user, info.password, info.dbname, info.sslmode)
-	fmt.Println(connectionString)
-	db, err := sql.Open("postgres", connectionString)
+	connection, err := pgx.Connect(context.Background(), url)
 	if err != nil {
 		return DatabaseConnection{}, err
 	}
-	err = db.Ping()
+	err = connection.Ping(context.Background())
 	if err != nil {
 		return DatabaseConnection{}, err
 	}
-	return DatabaseConnection{db}, nil
+	return DatabaseConnection{connection}, nil
 }
 
-func getDatabaseConnectionInfo() (DatabaseConnectionInfo, error) {
+func getDatabaseURL() (string, error) {
 	host := os.Getenv("DB_HOST")
-	portValue, err := strconv.ParseUint(os.Getenv("DB_PORT"), 10, 64)
-	if err != nil {
-		return DatabaseConnectionInfo{}, err
-	}
-	port := uint16(portValue)
+	port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
-	sslmode := os.Getenv("DB_SSLMODE")
 
-	return DatabaseConnectionInfo{
-		host,
-		port,
-		user,
-		password,
-		dbname,
-		sslmode,
-	}, nil
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, dbname), nil
 }
 
 func (connection *DatabaseConnection) Close() error {
-	return connection.db.Close()
+	return connection.connection.Close(context.Background())
 }
 
 func (connection *DatabaseConnection) Save(car entities.CarPersistenceEntity) error {
@@ -75,7 +60,7 @@ func (connection *DatabaseConnection) Save(car entities.CarPersistenceEntity) er
 	INSERT INTO public."Car" (vin, brand, model)
 	VALUES ('%s', '%s', '%s')
 `, car.Vin.Vin, car.Brand, car.Model)
-	_, err := connection.db.Exec(statement)
+	_, err := connection.connection.Exec(context.Background(), statement)
 	return err
 }
 
@@ -84,7 +69,7 @@ func (connection *DatabaseConnection) FindAll() ([]entities.CarPersistenceEntity
 		SELECT *
 		FROM public."Car"
 	`
-	rows, err := connection.db.Query(statement)
+	rows, err := connection.connection.Query(context.Background(), statement)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +100,7 @@ func (connection *DatabaseConnection) FindByVin(vin string) (entities.CarPersist
 	FROM public."Car"
 	WHERE vin LIKE '%s'
 `, vin)
-	row := connection.db.QueryRow(statement)
+	row := connection.connection.QueryRow(context.Background(), statement)
 	switch err := row.Scan(&vinObject.Vin, &car.Model, &car.Brand); err {
 	case sql.ErrNoRows:
 		return entities.CarPersistenceEntity{}, errors.New("no car has the specified VIN")
