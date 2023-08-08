@@ -3,8 +3,10 @@ package controller
 import (
 	"car/DM-Car/src/api/stubs"
 	"car/DM-Car/src/logic/operations"
-	"github.com/labstack/echo/v4"
+	"errors"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 type CarController struct {
@@ -23,7 +25,15 @@ func (resource CarController) PostCar(ctx echo.Context) error {
 		return err
 	}
 
-	car, err := resource.ops.AddCar(payload.Vin.String(), *payload.Brand, *payload.Model)
+	if payload.Vin == nil || payload.Brand == nil || payload.Model == nil {
+		return errors.New("invalid payload")
+	}
+
+	if !stubs.IsValidVin(*payload.Vin) {
+		return errors.New("invalid Vin")
+	}
+
+	car, err := resource.ops.AddCar(*payload.Vin, *payload.Brand, *payload.Model)
 	if err != nil {
 		return err
 	}
@@ -45,7 +55,11 @@ func (resource CarController) GetCar(ctx echo.Context) error {
 }
 
 func (resource CarController) GetCarVin(ctx echo.Context, vin stubs.Vin) error {
-	car, err := resource.ops.GetCar(vin.String())
+	if !stubs.IsValidVin(vin) {
+		return errors.New("invalid Vin")
+	}
+
+	car, err := resource.ops.GetCar(vin)
 	if err != nil {
 		return err
 	}

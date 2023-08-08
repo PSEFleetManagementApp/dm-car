@@ -2,27 +2,19 @@ package infrastructure
 
 import (
 	"car/DM-Car/src/infrastructure/entities"
+	"car/DM-Car/src/support"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"os"
 
-	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	_ "github.com/lib/pq"
 )
 
-type PGXInterface interface {
-	Ping(ctx context.Context) error
-	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
-	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
-	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
-	Close(ctx context.Context) error
-}
-
 type DatabaseConnection struct {
-	connection PGXInterface
+	connection support.PGXInterface
 }
 
 func CreateDatabaseConnection() (DatabaseConnection, error) {

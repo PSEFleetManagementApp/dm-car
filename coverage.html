@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">car/DM-Car/src/api/controller/CarController.go (75.0%)</option>
+				<option value="file0">car/DM-Car/src/api/controller/CarController.go (80.8%)</option>
 				
 				<option value="file1">car/DM-Car/src/infrastructure/CarRepository.go (61.1%)</option>
 				
@@ -88,8 +88,10 @@
 import (
         "car/DM-Car/src/api/stubs"
         "car/DM-Car/src/logic/operations"
-        "github.com/labstack/echo/v4"
+        "errors"
         "net/http"
+
+        "github.com/labstack/echo/v4"
 )
 
 type CarController struct {
@@ -108,8 +110,16 @@ func (resource CarController) PostCar(ctx echo.Context) error <span class="cov8"
                 return err
         }</span>
 
-        <span class="cov8" title="1">car, err := resource.ops.AddCar(payload.Vin.String(), *payload.Brand, *payload.Model)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if payload.Vin == nil || payload.Brand == nil || payload.Model == nil </span><span class="cov8" title="1">{
+                return errors.New("invalid payload")
+        }</span>
+
+        <span class="cov8" title="1">if !stubs.IsValidVin(*payload.Vin) </span><span class="cov8" title="1">{
+                return errors.New("invalid Vin")
+        }</span>
+
+        <span class="cov8" title="1">car, err := resource.ops.AddCar(*payload.Vin, *payload.Brand, *payload.Model)
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
@@ -130,7 +140,11 @@ func (resource CarController) GetCar(ctx echo.Context) error <span class="cov8" 
 }
 
 func (resource CarController) GetCarVin(ctx echo.Context, vin stubs.Vin) error <span class="cov8" title="1">{
-        car, err := resource.ops.GetCar(vin.String())
+        if !stubs.IsValidVin(vin) </span><span class="cov0" title="0">{
+                return errors.New("invalid Vin")
+        }</span>
+
+        <span class="cov8" title="1">car, err := resource.ops.GetCar(vin)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
@@ -191,27 +205,19 @@ func (repository *CarRepository) Close() error <span class="cov0" title="0">{
 
 import (
         "car/DM-Car/src/infrastructure/entities"
+        "car/DM-Car/src/support"
         "context"
         "database/sql"
         "errors"
         "fmt"
         "os"
 
-        "github.com/jackc/pgconn"
         "github.com/jackc/pgx/v4"
         _ "github.com/lib/pq"
 )
 
-type PGXInterface interface {
-        Ping(ctx context.Context) error
-        Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
-        Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
-        QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
-        Close(ctx context.Context) error
-}
-
 type DatabaseConnection struct {
-        connection PGXInterface
+        connection support.PGXInterface
 }
 
 func CreateDatabaseConnection() (DatabaseConnection, error) <span class="cov0" title="0">{
