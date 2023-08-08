@@ -4,6 +4,8 @@ go 1.20
 
 require (
 	github.com/deepmap/oapi-codegen v1.13.0
+	github.com/labstack/echo/v4 v4.10.2
+	github.com/lib/pq v1.10.9
 )
 
 require (
@@ -21,7 +23,6 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/labstack/echo/v4 v4.10.2 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

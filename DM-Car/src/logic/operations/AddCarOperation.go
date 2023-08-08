@@ -4,7 +4,7 @@ import (
 	"car/DM-Car/src/logic/model"
 )
 
-func (ops CarOperations) AddCar(vin string, brand string, carModel string) (*model.Car, error) {
+func (ops CarOperations) AddCar(vin string, brand string, carModel string) (model.Car, error) {
 	car := model.Car{
 		Vin:   vin,
 		Brand: brand,
@@ -13,8 +13,8 @@ func (ops CarOperations) AddCar(vin string, brand string, carModel string) (*mod
 
 	err := ops.repository.Save(car)
 	if err != nil {
-		return &model.Car{}, err
+		return model.Car{}, err
 	}
 
-	return &car, nil
+	return car, nil
 }

@@ -13,8 +13,8 @@ func ConvertCarToCarPersistenceEntity(car model.Car) entities.CarPersistenceEnti
 	}
 }
 
-func ConvertCarPersistenceEntityToCar(carPersistenceEntity entities.CarPersistenceEntity) *model.Car {
-	return &model.Car{
+func ConvertCarPersistenceEntityToCar(carPersistenceEntity entities.CarPersistenceEntity) model.Car {
+	return model.Car{
 		Vin:   carPersistenceEntity.Vin,
 		Brand: carPersistenceEntity.Brand,
 		Model: carPersistenceEntity.Model,
