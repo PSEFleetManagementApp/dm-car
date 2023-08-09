@@ -15,13 +15,13 @@ import (
 type ServerInterface interface {
 	// Retrieve all existing cars
 	// (GET /car)
-	GetCar(ctx echo.Context) error
+	GetCars(ctx echo.Context) error
 	// Add a new car
 	// (POST /car)
-	PostCar(ctx echo.Context) error
+	AddCar(ctx echo.Context) error
 	// Retrieve an existing car
 	// (GET /car/{vin})
-	GetCarVin(ctx echo.Context, vin Vin) error
+	GetCar(ctx echo.Context, vin Vin) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -30,25 +30,25 @@ type ServerInterfaceWrapper struct {
 }
 
 // GetCar converts echo context to params.
-func (w *ServerInterfaceWrapper) GetCar(ctx echo.Context) error {
+func (w *ServerInterfaceWrapper) GetCars(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.GetCar(ctx)
+	err = w.Handler.GetCars(ctx)
 	return err
 }
 
 // PostCar converts echo context to params.
-func (w *ServerInterfaceWrapper) PostCar(ctx echo.Context) error {
+func (w *ServerInterfaceWrapper) AddCar(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.PostCar(ctx)
+	err = w.Handler.AddCar(ctx)
 	return err
 }
 
 // GetCarVin converts echo context to params.
-func (w *ServerInterfaceWrapper) GetCarVin(ctx echo.Context) error {
+func (w *ServerInterfaceWrapper) GetCar(ctx echo.Context) error {
 	var err error
 	// ------------- Path parameter "vin" -------------
 	var vin Vin
@@ -59,7 +59,7 @@ func (w *ServerInterfaceWrapper) GetCarVin(ctx echo.Context) error {
 	}
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.GetCarVin(ctx, vin)
+	err = w.Handler.GetCar(ctx, vin)
 	return err
 }
 
@@ -91,8 +91,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/cars", wrapper.GetCar)
-	router.POST(baseURL+"/cars", wrapper.PostCar)
-	router.GET(baseURL+"/cars/:vin", wrapper.GetCarVin)
+	router.GET(baseURL+"/cars", wrapper.GetCars)
+	router.POST(baseURL+"/cars", wrapper.AddCar)
+	router.GET(baseURL+"/cars/:vin", wrapper.GetCar)
 
 }

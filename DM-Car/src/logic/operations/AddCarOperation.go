@@ -11,7 +11,7 @@ func (ops CarOperations) AddCar(vin string, brand string, carModel string) (mode
 		Model: carModel,
 	}
 
-	err := ops.repository.Save(car)
+	err := ops.repository.AddCar(car)
 	if err != nil {
 		return model.Car{}, err
 	}

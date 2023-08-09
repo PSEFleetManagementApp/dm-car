@@ -19,7 +19,8 @@ func CreateCarResourcesWithMockRepository(mockDatabaseContents map[string]model.
 	return NewCarController(carOperations), carOperations, carRepository
 }
 
-func TestPostCar(t *testing.T) {
+// Test that 
+func TestAddCar(t *testing.T) {
 	context, request, recorder := support.CreateMockEchoSupport(
 		http.MethodPost,
 		"/cars",
@@ -29,14 +30,14 @@ func TestPostCar(t *testing.T) {
 
 	carsResource, _, carRepository := CreateCarResourcesWithMockRepository(map[string]model.Car{})
 
-	if assert.NoError(t, carsResource.PostCar(context)) {
+	if assert.NoError(t, carsResource.AddCar(context)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 		assert.Contains(t, carRepository.MockDatabase, support.Car.Vin.Vin)
 		assert.Equal(t, carRepository.MockDatabase[support.Car.Vin.Vin], support.Car)
 	}
 }
 
-func TestPostCarWithExistingVin(t *testing.T) {
+func TestAddCarWithExistingVin(t *testing.T) {
 	context, request, _ := support.CreateMockEchoSupport(
 		http.MethodPost,
 		"/cars",
@@ -48,10 +49,10 @@ func TestPostCarWithExistingVin(t *testing.T) {
 		"JH4DA3350KS009715": support.Car,
 	})
 
-	assert.Error(t, carsResource.PostCar(context))
+	assert.Error(t, carsResource.AddCar(context))
 }
 
-func TestPostCarInvalidVin(t *testing.T) {
+func TestAddCarInvalidVin(t *testing.T) {
 	for _, invalidVin := range support.InvalidVins {
 		body := fmt.Sprintf(`
 		{
@@ -70,11 +71,11 @@ func TestPostCarInvalidVin(t *testing.T) {
 
 		carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
 
-		assert.Error(t, carsResource.PostCar(context))
+		assert.Error(t, carsResource.AddCar(context))
 	}
 }
 
-func TestPostCarNoBrand(t *testing.T) {
+func TestAddCarNoBrand(t *testing.T) {
 	body := fmt.Sprintf(`
 	{
 		"vin": "%s",
@@ -91,10 +92,10 @@ func TestPostCarNoBrand(t *testing.T) {
 
 	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
 
-	assert.Error(t, carsResource.PostCar(context))
+	assert.Error(t, carsResource.AddCar(context))
 }
 
-func TestPostCarNoModel(t *testing.T) {
+func TestAddCarNoModel(t *testing.T) {
 	body := fmt.Sprintf(`
 	{
 		"vin": "%s",
@@ -111,10 +112,10 @@ func TestPostCarNoModel(t *testing.T) {
 
 	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
 
-	assert.Error(t, carsResource.PostCar(context))
+	assert.Error(t, carsResource.AddCar(context))
 }
 
-func TestGetCarVin(t *testing.T) {
+func TestGetCar(t *testing.T) {
 	body := fmt.Sprintf(`{"Vin":{"Vin":"%s"},"Brand":"%s","Model":"%s"}
 `, support.Car.Vin.Vin, support.Car.Brand, support.Car.Model)
 
@@ -131,13 +132,13 @@ func TestGetCarVin(t *testing.T) {
 		"JH4DA3350KS009715": support.Car,
 	})
 
-	if assert.NoError(t, carsResource.GetCarVin(context, support.Car.Vin.Vin)) {
+	if assert.NoError(t, carsResource.GetCar(context, support.Car.Vin.Vin)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 		assert.Equal(t, body, recorder.Body.String())
 	}
 }
 
-func TestGetCar(t *testing.T) {
+func TestGetCars(t *testing.T) {
 	carBody := fmt.Sprintf(`{"Vin":{"Vin":"%s"},"Brand":"%s","Model":"%s"}`, support.Car.Vin.Vin, support.Car.Brand, support.Car.Model)
 	carsBody := fmt.Sprintf(`[%s,%s,%s,%s]
 `, carBody, carBody, carBody, carBody)
@@ -158,7 +159,7 @@ func TestGetCar(t *testing.T) {
 		"JH4DA3350KS009718": support.Car,
 	})
 
-	if assert.NoError(t, carsResource.GetCar(context)) {
+	if assert.NoError(t, carsResource.GetCars(context)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 		assert.Equal(t, carsBody, recorder.Body.String())
 	}
