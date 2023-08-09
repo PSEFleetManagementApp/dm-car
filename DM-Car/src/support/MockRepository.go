@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// A mocked version of CarRepository that uses a Map instead of persisting Cars to the database
 type MockCarRepository struct {
 	MockDatabase map[string]model.Car
 }

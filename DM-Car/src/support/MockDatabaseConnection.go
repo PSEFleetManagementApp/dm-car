@@ -9,6 +9,7 @@ import (
 	"github.com/pashagolub/pgxmock"
 )
 
+// A common interface for the real and mocked database connection
 type PGXInterface interface {
 	Ping(ctx context.Context) error
 	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
@@ -22,10 +23,13 @@ func CreateMockDatabaseConnection(t *testing.T) pgxmock.PgxConnIface {
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
+	// Contrary to the real database connection, the mocked database connection
+	// is responsible for closing itself
 	defer mockDatabaseConnection.Close(context.Background())
 	return mockDatabaseConnection
 }
 
+// Helper function that validates that all expected SQL statements have been executed
 func ExpectExpectationsToBeMet(mockDatabaseConnection pgxmock.PgxConnIface, t *testing.T) {
 	if err := mockDatabaseConnection.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)

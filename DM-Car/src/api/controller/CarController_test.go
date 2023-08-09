@@ -13,13 +13,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Create all resources used by the car controller with an underlying mocked repository
 func CreateCarResourcesWithMockRepository(mockDatabaseContents map[string]model.Car) (CarController, operations.CarOperations, support.MockCarRepository) {
 	carRepository := support.MockCarRepository{MockDatabase: mockDatabaseContents}
 	carOperations := operations.NewCarOperations(&carRepository)
 	return NewCarController(carOperations), carOperations, carRepository
 }
 
-// Test that 
+// Test that adding a car works
 func TestAddCar(t *testing.T) {
 	context, request, recorder := support.CreateMockEchoSupport(
 		http.MethodPost,
@@ -37,6 +38,7 @@ func TestAddCar(t *testing.T) {
 	}
 }
 
+// Test that adding a car with an existing Vin does not work
 func TestAddCarWithExistingVin(t *testing.T) {
 	context, request, _ := support.CreateMockEchoSupport(
 		http.MethodPost,
@@ -52,6 +54,7 @@ func TestAddCarWithExistingVin(t *testing.T) {
 	assert.Error(t, carsResource.AddCar(context))
 }
 
+// Test that adding a car with an invalid Vin does not work
 func TestAddCarInvalidVin(t *testing.T) {
 	for _, invalidVin := range support.InvalidVins {
 		body := fmt.Sprintf(`
@@ -75,6 +78,28 @@ func TestAddCarInvalidVin(t *testing.T) {
 	}
 }
 
+// Test that adding a car without a Vin does not work
+func TestAddCarNoVin(t *testing.T) {
+	body := fmt.Sprintf(`
+	{
+		"brand": "%s",
+		"model": "%s"
+	}
+	`, support.Car.Brand, support.Car.Model)
+
+	context, request, _ := support.CreateMockEchoSupport(
+		http.MethodPost,
+		"/cars",
+		strings.NewReader(body),
+	)
+	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+
+	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
+
+	assert.Error(t, carsResource.AddCar(context))
+}
+
+// Test that adding a car without a brand does not work
 func TestAddCarNoBrand(t *testing.T) {
 	body := fmt.Sprintf(`
 	{
@@ -95,6 +120,7 @@ func TestAddCarNoBrand(t *testing.T) {
 	assert.Error(t, carsResource.AddCar(context))
 }
 
+// Test that adding a car without a model does not work
 func TestAddCarNoModel(t *testing.T) {
 	body := fmt.Sprintf(`
 	{
@@ -115,6 +141,7 @@ func TestAddCarNoModel(t *testing.T) {
 	assert.Error(t, carsResource.AddCar(context))
 }
 
+// Test that getting a specific car works
 func TestGetCar(t *testing.T) {
 	body := fmt.Sprintf(`{"Vin":{"Vin":"%s"},"Brand":"%s","Model":"%s"}
 `, support.Car.Vin.Vin, support.Car.Brand, support.Car.Model)
@@ -138,6 +165,7 @@ func TestGetCar(t *testing.T) {
 	}
 }
 
+// Test that getting all cars works
 func TestGetCars(t *testing.T) {
 	carBody := fmt.Sprintf(`{"Vin":{"Vin":"%s"},"Brand":"%s","Model":"%s"}`, support.Car.Vin.Vin, support.Car.Brand, support.Car.Model)
 	carsBody := fmt.Sprintf(`[%s,%s,%s,%s]

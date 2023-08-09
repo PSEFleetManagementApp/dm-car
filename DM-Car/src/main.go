@@ -12,15 +12,22 @@ import (
 )
 
 func main() {
+	// Create the CarRepository
+	// This also establishes the connection to the database
 	carRepository := infrastructure.NewCarRepository()
+	// Close the connection to the database when carRepository goes out of scope
+	// This happens when the program exists
 	defer carRepository.Close()
 
+	// Create the CarOperations and the CarController
 	carOperations := operations.NewCarOperations(carRepository)
 	carsResource := controller.NewCarController(carOperations)
 
+	// Register the CarController with the server for handling it's routes
 	e := echo.New()
 	stubs.RegisterHandlers(e, &carsResource)
 
+	// Start the server
 	var port = flag.Int("port", 8080, "Port for local server")
 	e.Logger.Fatal(e.Start(fmt.Sprintf("0.0.0.0:%d", *port)))
 }

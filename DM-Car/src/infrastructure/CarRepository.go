@@ -19,11 +19,11 @@ func NewCarRepository() *CarRepository {
 
 func (repository *CarRepository) AddCar(car model.Car) error {
 	carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
-	return repository.connection.Save(carPersistenceEntity)
+	return repository.connection.AddCar(carPersistenceEntity)
 }
 
 func (repository *CarRepository) GetCars() ([]model.Car, error) {
-	cars, err := repository.connection.FindAll()
+	cars, err := repository.connection.GetCars()
 	if err != nil {
 		return nil, err
 	}
@@ -35,13 +35,14 @@ func (repository *CarRepository) GetCars() ([]model.Car, error) {
 }
 
 func (repository *CarRepository) GetCar(vin string) (model.Car, error) {
-	car, err := repository.connection.FindByVin(vin)
+	car, err := repository.connection.GetCar(vin)
 	if err != nil {
 		return model.Car{}, err
 	}
 	return mappers.ConvertCarPersistenceEntityToCar(car), nil
 }
 
+// The CarRepository is responsible for closing the database connection
 func (repository *CarRepository) Close() error {
 	return repository.connection.Close()
 }

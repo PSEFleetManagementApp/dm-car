@@ -7,6 +7,9 @@ import (
 	"github.com/pashagolub/pgxmock"
 )
 
+// Test that persisting a car works
+// This assumes that only valid cars will be used as it is the controllers task
+// to prevent invalid cars from entering the system
 func TestAddCar(t *testing.T) {
 	mockDatabaseConnection := support.CreateMockDatabaseConnection(t)
 
@@ -20,6 +23,8 @@ func TestAddCar(t *testing.T) {
 	support.ExpectExpectationsToBeMet(mockDatabaseConnection, t)
 }
 
+// Test that retrieving all persisted cars works
+// This uses the same assumptions as the test above
 func TestGetCars(t *testing.T) {
 	mockDatabaseConnection := support.CreateMockDatabaseConnection(t)
 
@@ -34,6 +39,8 @@ func TestGetCars(t *testing.T) {
 	support.ExpectExpectationsToBeMet(mockDatabaseConnection, t)
 }
 
+// Test that retrieving a specific persisted car works
+// This uses the same assumptions as the test above
 func TestGetCar(t *testing.T) {
 	mockDatabaseConnection := support.CreateMockDatabaseConnection(t)
 

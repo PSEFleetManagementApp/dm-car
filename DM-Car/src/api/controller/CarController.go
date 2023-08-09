@@ -17,6 +17,7 @@ func NewCarController(ops operations.CarOperations) CarController {
 	return CarController{ops: ops}
 }
 
+// Route: POST /cars
 func (resource CarController) AddCar(ctx echo.Context) error {
 	var payload stubs.PostCarJSONRequestBody
 
@@ -25,10 +26,12 @@ func (resource CarController) AddCar(ctx echo.Context) error {
 		return err
 	}
 
+	// Check that all fields have been set
 	if payload.Vin == nil || payload.Brand == nil || payload.Model == nil {
 		return errors.New("invalid payload")
 	}
 
+	// Check that the Vin is valid
 	if !stubs.IsValidVin(*payload.Vin) {
 		return errors.New("invalid Vin")
 	}
@@ -46,6 +49,7 @@ func (resource CarController) AddCar(ctx echo.Context) error {
 	return nil
 }
 
+// Route: GET /cars
 func (resource CarController) GetCars(ctx echo.Context) error {
 	cars, err := resource.ops.GetCars()
 	if err != nil {
@@ -54,6 +58,7 @@ func (resource CarController) GetCars(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, cars)
 }
 
+// Route: GET /cars/:vin
 func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error {
 	if !stubs.IsValidVin(vin) {
 		return errors.New("invalid Vin")
