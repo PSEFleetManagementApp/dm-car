@@ -17,12 +17,12 @@ func NewCarRepository() *CarRepository {
 	return &CarRepository{connection}
 }
 
-func (repository *CarRepository) Save(car model.Car) error {
+func (repository *CarRepository) AddCar(car model.Car) error {
 	carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
 	return repository.connection.Save(carPersistenceEntity)
 }
 
-func (repository *CarRepository) FindAll() ([]model.Car, error) {
+func (repository *CarRepository) GetCars() ([]model.Car, error) {
 	cars, err := repository.connection.FindAll()
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (repository *CarRepository) FindAll() ([]model.Car, error) {
 	return result, nil
 }
 
-func (repository *CarRepository) FindByVin(vin string) (model.Car, error) {
+func (repository *CarRepository) GetCar(vin string) (model.Car, error) {
 	car, err := repository.connection.FindByVin(vin)
 	if err != nil {
 		return model.Car{}, err

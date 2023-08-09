@@ -1,7 +1,7 @@
 package model
 
 type CarRepositoryInterface interface {
-	Save(car Car) error
-	FindAll() ([]Car, error)
-	FindByVin(vin string) (Car, error)
+	AddCar(car Car) error
+	GetCars() ([]Car, error)
+	GetCar(vin string) (Car, error)
 }

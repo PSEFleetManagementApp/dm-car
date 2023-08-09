@@ -9,7 +9,7 @@ type MockCarRepository struct {
 	MockDatabase map[string]model.Car
 }
 
-func (mockRepository *MockCarRepository) Save(car model.Car) error {
+func (mockRepository *MockCarRepository) AddCar(car model.Car) error {
 	if _, ok := mockRepository.MockDatabase[car.Vin.Vin]; ok {
 		return errors.New("vin already exists")
 	}
@@ -17,7 +17,7 @@ func (mockRepository *MockCarRepository) Save(car model.Car) error {
 	return nil
 }
 
-func (mockRepository *MockCarRepository) FindAll() ([]model.Car, error) {
+func (mockRepository *MockCarRepository) GetCars() ([]model.Car, error) {
 	cars := []model.Car{}
 	for _, value := range mockRepository.MockDatabase {
 		cars = append(cars, value)
@@ -25,7 +25,7 @@ func (mockRepository *MockCarRepository) FindAll() ([]model.Car, error) {
 	return cars, nil
 }
 
-func (mockRepository *MockCarRepository) FindByVin(vin string) (model.Car, error) {
+func (mockRepository *MockCarRepository) GetCar(vin string) (model.Car, error) {
 	car, ok := mockRepository.MockDatabase[vin]
 	if ok {
 		return car, nil

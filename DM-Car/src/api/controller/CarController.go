@@ -17,7 +17,7 @@ func NewCarController(ops operations.CarOperations) CarController {
 	return CarController{ops: ops}
 }
 
-func (resource CarController) PostCar(ctx echo.Context) error {
+func (resource CarController) AddCar(ctx echo.Context) error {
 	var payload stubs.PostCarJSONRequestBody
 
 	err := ctx.Bind(&payload)
@@ -46,7 +46,7 @@ func (resource CarController) PostCar(ctx echo.Context) error {
 	return nil
 }
 
-func (resource CarController) GetCar(ctx echo.Context) error {
+func (resource CarController) GetCars(ctx echo.Context) error {
 	cars, err := resource.ops.GetCars()
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func (resource CarController) GetCar(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, cars)
 }
 
-func (resource CarController) GetCarVin(ctx echo.Context, vin stubs.Vin) error {
+func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error {
 	if !stubs.IsValidVin(vin) {
 		return errors.New("invalid Vin")
 	}

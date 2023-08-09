@@ -102,7 +102,7 @@ func NewCarController(ops operations.CarOperations) CarController <span class="c
         return CarController{ops: ops}
 }</span>
 
-func (resource CarController) PostCar(ctx echo.Context) error <span class="cov8" title="1">{
+func (resource CarController) AddCar(ctx echo.Context) error <span class="cov8" title="1">{
         var payload stubs.PostCarJSONRequestBody
 
         err := ctx.Bind(&amp;payload)
@@ -131,7 +131,7 @@ func (resource CarController) PostCar(ctx echo.Context) error <span class="cov8"
         <span class="cov8" title="1">return nil</span>
 }
 
-func (resource CarController) GetCar(ctx echo.Context) error <span class="cov8" title="1">{
+func (resource CarController) GetCars(ctx echo.Context) error <span class="cov8" title="1">{
         cars, err := resource.ops.GetCars()
         if err != nil </span><span class="cov0" title="0">{
                 return err
@@ -139,7 +139,7 @@ func (resource CarController) GetCar(ctx echo.Context) error <span class="cov8" 
         <span class="cov8" title="1">return ctx.JSON(http.StatusOK, cars)</span>
 }
 
-func (resource CarController) GetCarVin(ctx echo.Context, vin stubs.Vin) error <span class="cov8" title="1">{
+func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error <span class="cov8" title="1">{
         if !stubs.IsValidVin(vin) </span><span class="cov0" title="0">{
                 return errors.New("invalid Vin")
         }</span>
@@ -171,12 +171,12 @@ func NewCarRepository() *CarRepository <span class="cov0" title="0">{
         <span class="cov0" title="0">return &amp;CarRepository{connection}</span>
 }
 
-func (repository *CarRepository) Save(car model.Car) error <span class="cov8" title="1">{
+func (repository *CarRepository) AddCar(car model.Car) error <span class="cov8" title="1">{
         carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
         return repository.connection.Save(carPersistenceEntity)
 }</span>
 
-func (repository *CarRepository) FindAll() ([]model.Car, error) <span class="cov8" title="1">{
+func (repository *CarRepository) GetCars() ([]model.Car, error) <span class="cov8" title="1">{
         cars, err := repository.connection.FindAll()
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
@@ -188,7 +188,7 @@ func (repository *CarRepository) FindAll() ([]model.Car, error) <span class="cov
         <span class="cov8" title="1">return result, nil</span>
 }
 
-func (repository *CarRepository) FindByVin(vin string) (model.Car, error) <span class="cov8" title="1">{
+func (repository *CarRepository) GetCar(vin string) (model.Car, error) <span class="cov8" title="1">{
         car, err := repository.connection.FindByVin(vin)
         if err != nil </span><span class="cov0" title="0">{
                 return model.Car{}, err
@@ -345,7 +345,7 @@ func (ops CarOperations) AddCar(vin string, brand string, carModel string) (mode
                 Model: carModel,
         }
 
-        err := ops.repository.Save(car)
+        err := ops.repository.AddCar(car)
         if err != nil </span><span class="cov0" title="0">{
                 return model.Car{}, err
         }</span>
@@ -372,7 +372,7 @@ func NewCarOperations(repository model.CarRepositoryInterface) CarOperations <sp
 import "car/DM-Car/src/logic/model"
 
 func (ops CarOperations) GetCar(vin string) (model.Car, error) <span class="cov8" title="1">{
-        car, err := ops.repository.FindByVin(vin)
+        car, err := ops.repository.GetCar(vin)
         if err != nil </span><span class="cov0" title="0">{
                 return model.Car{}, err
         }</span>
@@ -386,7 +386,7 @@ func (ops CarOperations) GetCar(vin string) (model.Car, error) <span class="cov8
 import "car/DM-Car/src/logic/model"
 
 func (ops CarOperations) GetCars() ([]model.Car, error) <span class="cov8" title="1">{
-        cars, err := ops.repository.FindAll()
+        cars, err := ops.repository.GetCars()
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
