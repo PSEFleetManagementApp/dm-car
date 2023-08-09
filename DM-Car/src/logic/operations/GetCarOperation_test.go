@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Test that the operation of getting an existing car by it's Vin works
 func TestGetCar(t *testing.T) {
 	carRepository := support.MockCarRepository{MockDatabase: map[string]model.Car{
 		"JH4DA3350KS009715": support.Car,

@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Test that the operation of adding a car works
 func TestAddCar(t *testing.T) {
 	carRepository := support.MockCarRepository{MockDatabase: map[string]model.Car{}}
 	carOperations := NewCarOperations(&carRepository)
