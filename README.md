@@ -8,10 +8,6 @@
 
 [API Specification](DM-Car/src/api/specification/api_specification_dm_car.yaml)
 
-## Guideline Generate API Controller Stubs from API Specification
-
-[Generate API Controller Stubs from API Specification](pages/guideline_generate_go_api_controller_stubs_from_api_specification.md)
-
 ## Run DM-Car
 
 1. Execute main.go
