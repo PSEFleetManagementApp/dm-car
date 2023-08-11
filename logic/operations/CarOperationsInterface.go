@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"car/DM-Car/src/logic/model"
+	"car/logic/model"
 )
 
 type CarOperationsInterface interface {

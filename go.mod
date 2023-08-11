@@ -5,11 +5,13 @@ go 1.20
 require (
 	github.com/deepmap/oapi-codegen v1.13.0
 	github.com/labstack/echo/v4 v4.10.2
-	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.8.3
 )
 
-require github.com/kr/pretty v0.3.0 // indirect
+require (
+	github.com/kr/pretty v0.3.0 // indirect
+	github.com/lib/pq v1.10.9 // indirect
+)
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect

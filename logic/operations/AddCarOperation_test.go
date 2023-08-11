@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"car/DM-Car/src/infrastructure"
-	"car/DM-Car/src/infrastructure/entities"
-	"car/DM-Car/src/logic/model"
+	"car/infrastructure"
+	"car/infrastructure/entities"
+	"car/logic/model"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

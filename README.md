@@ -47,6 +47,4 @@ DB_NAME // Name of the database
 
 ## Run Tests
 
-1. Execute `go test -coverprofile=coverage.out -v ./...`
-2. Execute `go tool cover -html=coverage.out -o coverage.html`
-3. Open the created HTML file to see a coverage report
+1. Execute `go test -v ./...`

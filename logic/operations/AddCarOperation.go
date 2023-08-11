@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"car/DM-Car/src/logic/model"
+	"car/logic/model"
 )
 
 func (ops CarOperations) AddCar(vin string, brand string, carModel string) (model.Car, error) {

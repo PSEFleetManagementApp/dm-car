@@ -1,9 +1,9 @@
 package infrastructure
 
 import (
-	"car/DM-Car/src/infrastructure/entities"
-	"car/DM-Car/src/infrastructure/mappers"
-	"car/DM-Car/src/logic/model"
+	"car/infrastructure/entities"
+	"car/infrastructure/mappers"
+	"car/logic/model"
 	"errors"
 )
 

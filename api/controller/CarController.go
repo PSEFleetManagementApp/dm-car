@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"car/DM-Car/src/api/stubs"
-	"car/DM-Car/src/logic/operations"
+	"car/api/stubs"
+	"car/logic/operations"
 	"errors"
 	"net/http"
 	"regexp"

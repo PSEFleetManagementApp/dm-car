@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"car/DM-Car/src/infrastructure"
-	"car/DM-Car/src/infrastructure/entities"
-	"car/DM-Car/src/logic/operations"
+	"car/infrastructure"
+	"car/infrastructure/entities"
+	"car/logic/operations"
 	"fmt"
 	"net/http"
 	"strings"

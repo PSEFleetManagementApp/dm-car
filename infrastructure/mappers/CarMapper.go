@@ -1,8 +1,8 @@
 package mappers
 
 import (
-	"car/DM-Car/src/infrastructure/entities"
-	"car/DM-Car/src/logic/model"
+	"car/infrastructure/entities"
+	"car/logic/model"
 )
 
 func ConvertCarToCarPersistenceEntity(car model.Car) entities.CarPersistenceEntity {

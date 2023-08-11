@@ -1,6 +1,6 @@
 package operations
 
-import "car/DM-Car/src/logic/model"
+import "car/logic/model"
 
 func (ops CarOperations) GetCars() (model.Cars, error) {
 	cars, err := ops.repository.GetCars()

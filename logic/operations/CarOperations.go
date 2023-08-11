@@ -1,6 +1,6 @@
 package operations
 
-import "car/DM-Car/src/logic/model"
+import "car/logic/model"
 
 type CarOperations struct {
 	repository model.CarRepositoryInterface
