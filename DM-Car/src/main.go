@@ -7,6 +7,8 @@ import (
 	"car/DM-Car/src/logic/operations"
 	"flag"
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -28,6 +30,10 @@ func main() {
 	stubs.RegisterHandlers(e, &carsResource)
 
 	// Start the server
-	var port = flag.Int("port", 8080, "Port for local server")
+	var portNumber, err = strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		e.Logger.Fatal("invalid port number")	
+	}
+	var port = flag.Int("port", portNumber, "Port for local server")
 	e.Logger.Fatal(e.Start(fmt.Sprintf("0.0.0.0:%d", *port)))
 }
