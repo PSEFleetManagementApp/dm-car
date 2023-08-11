@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS public."Car"
 
 2. Create the following environment variables for DM-Car:
 ```env
+PORT // The port on which the microservice receives requests
 DB_HOST // Address of the database
 DB_PORT // Port of the database
 DB_USER // User to access the database
