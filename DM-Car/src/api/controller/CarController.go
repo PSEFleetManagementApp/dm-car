@@ -5,6 +5,7 @@ import (
 	"car/DM-Car/src/logic/operations"
 	"errors"
 	"net/http"
+	"regexp"
 
 	"github.com/labstack/echo/v4"
 )
@@ -19,7 +20,7 @@ func NewCarController(ops operations.CarOperations) CarController {
 
 // Route: POST /cars
 func (resource CarController) AddCar(ctx echo.Context) error {
-	var payload stubs.PostCarJSONRequestBody
+	var payload stubs.AddCarJSONRequestBody
 
 	err := ctx.Bind(&payload)
 	if err != nil {
@@ -32,7 +33,7 @@ func (resource CarController) AddCar(ctx echo.Context) error {
 	}
 
 	// Check that the Vin is valid
-	if !stubs.IsValidVin(*payload.Vin) {
+	if !IsValidVin(*payload.Vin) {
 		return errors.New("invalid Vin")
 	}
 
@@ -60,7 +61,7 @@ func (resource CarController) GetCars(ctx echo.Context) error {
 
 // Route: GET /cars/:vin
 func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error {
-	if !stubs.IsValidVin(vin) {
+	if !IsValidVin(vin) {
 		return errors.New("invalid Vin")
 	}
 
@@ -69,4 +70,13 @@ func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error {
 		return err
 	}
 	return ctx.JSON(http.StatusOK, car)
+}
+
+// Check that a Vin is valid according to the domain constraints
+func IsValidVin(vin stubs.Vin) bool {
+	match, err := regexp.MatchString("^[A-HJ-NPR-Z0-9]{13}[0-9]{4}$", vin)
+	if err != nil {
+		return false
+	}
+	return match
 }

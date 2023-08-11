@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">car/DM-Car/src/api/controller/CarController.go (80.8%)</option>
+				<option value="file0">car/DM-Car/src/api/controller/CarController.go (80.0%)</option>
 				
 				<option value="file1">car/DM-Car/src/infrastructure/CarRepository.go (61.1%)</option>
 				
@@ -90,6 +90,7 @@ import (
         "car/DM-Car/src/logic/operations"
         "errors"
         "net/http"
+        "regexp"
 
         "github.com/labstack/echo/v4"
 )
@@ -104,7 +105,7 @@ func NewCarController(ops operations.CarOperations) CarController <span class="c
 
 // Route: POST /cars
 func (resource CarController) AddCar(ctx echo.Context) error <span class="cov8" title="1">{
-        var payload stubs.PostCarJSONRequestBody
+        var payload stubs.AddCarJSONRequestBody
 
         err := ctx.Bind(&amp;payload)
         if err != nil </span><span class="cov0" title="0">{
@@ -117,7 +118,7 @@ func (resource CarController) AddCar(ctx echo.Context) error <span class="cov8" 
         }</span>
 
         // Check that the Vin is valid
-        <span class="cov8" title="1">if !stubs.IsValidVin(*payload.Vin) </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if !IsValidVin(*payload.Vin) </span><span class="cov8" title="1">{
                 return errors.New("invalid Vin")
         }</span>
 
@@ -145,7 +146,7 @@ func (resource CarController) GetCars(ctx echo.Context) error <span class="cov8"
 
 // Route: GET /cars/:vin
 func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error <span class="cov8" title="1">{
-        if !stubs.IsValidVin(vin) </span><span class="cov0" title="0">{
+        if !IsValidVin(vin) </span><span class="cov0" title="0">{
                 return errors.New("invalid Vin")
         }</span>
 
@@ -155,7 +156,15 @@ func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error <spa
         }</span>
         <span class="cov8" title="1">return ctx.JSON(http.StatusOK, car)</span>
 }
-</pre>
+
+// Check that a Vin is valid according to the domain constraints
+func IsValidVin(vin stubs.Vin) bool <span class="cov8" title="1">{
+        match, err := regexp.MatchString("^[A-HJ-NPR-Z0-9]{13}[0-9]{4}$", vin)
+        if err != nil </span><span class="cov0" title="0">{
+                return false
+        }</span>
+        <span class="cov8" title="1">return match</span>
+}</pre>
 		
 		<pre class="file" id="file1" style="display: none">package infrastructure
 
