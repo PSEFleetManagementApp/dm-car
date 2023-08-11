@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"car/DM-Car/src/logic/model"
+	"car/DM-Car/src/infrastructure"
+	"car/DM-Car/src/infrastructure/entities"
 	"car/DM-Car/src/logic/operations"
-	"car/DM-Car/src/support"
 	"fmt"
 	"net/http"
 	"strings"
@@ -13,42 +13,60 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// A valid request body for a Car
+var CarBodyRequest = "{\"Vin\":\"JH4DA3350KS009715\",\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"}\n"
+
+// A valid response body for a Car
+var CarBodyResponse = "{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"}\n"
+
+// A valid response body for Cars
+var CarsBody = "{\"Cars\":[{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"},{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"},{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"},{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"}]}\n"
+
+// List of invalid Vins according to the domain constraints
+var InvalidVins = []string{
+	"JH4DA3350KS00",
+	"2CIGP44362R700796",
+	"1C3CDZBG8DN5O4146",
+	"1gCDC14K2LE198114",
+	"1G3NF52E3XC4036521",
+}
+
 // Create all resources used by the car controller with an underlying mocked repository
-func CreateCarResourcesWithMockRepository(mockDatabaseContents map[string]model.Car) (CarController, operations.CarOperations, support.MockCarRepository) {
-	carRepository := support.MockCarRepository{MockDatabase: mockDatabaseContents}
+func CreateCarResourcesWithMockRepository(mockDatabaseContents map[string]entities.CarPersistenceEntity) (CarController, operations.CarOperations, infrastructure.MockCarRepository) {
+	carRepository := infrastructure.MockCarRepository{MockDatabase: mockDatabaseContents}
 	carOperations := operations.NewCarOperations(&carRepository)
 	return NewCarController(carOperations), carOperations, carRepository
 }
 
 // Test that adding a car works
 func TestAddCar(t *testing.T) {
-	context, request, recorder := support.CreateMockEchoSupport(
+	context, request, recorder := CreateMockEcho(
 		http.MethodPost,
 		"/cars",
-		strings.NewReader(support.Body),
+		strings.NewReader(CarBodyRequest),
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, carRepository := CreateCarResourcesWithMockRepository(map[string]model.Car{})
+	carsResource, _, carRepository := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{})
 
 	if assert.NoError(t, carsResource.AddCar(context)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
-		assert.Contains(t, carRepository.MockDatabase, support.Car.Vin.Vin)
-		assert.Equal(t, carRepository.MockDatabase[support.Car.Vin.Vin], support.Car)
+		assert.Contains(t, carRepository.MockDatabase, entities.TestCarEntity.Vin.Vin)
+		assert.Equal(t, carRepository.MockDatabase[entities.TestCarEntity.Vin.Vin], entities.TestCarEntity)
 	}
 }
 
 // Test that adding a car with an existing Vin does not work
 func TestAddCarWithExistingVin(t *testing.T) {
-	context, request, _ := support.CreateMockEchoSupport(
+	context, request, _ := CreateMockEcho(
 		http.MethodPost,
 		"/cars",
-		strings.NewReader(support.Body),
+		strings.NewReader(CarBodyRequest),
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{
-		"JH4DA3350KS009715": support.Car,
+	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{
+		"JH4DA3350KS009715": entities.TestCarEntity,
 	})
 
 	assert.Error(t, carsResource.AddCar(context))
@@ -56,23 +74,26 @@ func TestAddCarWithExistingVin(t *testing.T) {
 
 // Test that adding a car with an invalid Vin does not work
 func TestAddCarInvalidVin(t *testing.T) {
-	for _, invalidVin := range support.InvalidVins {
+	for _, invalidVin := range InvalidVins {
 		body := fmt.Sprintf(`
 		{
 			"vin": "%s",
 			"brand": "%s",
 			"model": "%s"
 		}
-		`, invalidVin, support.Car.Brand, support.Car.Model)
+		`,
+			invalidVin,
+			entities.TestCarEntity.Brand,
+			entities.TestCarEntity.Model)
 
-		context, request, _ := support.CreateMockEchoSupport(
+		context, request, _ := CreateMockEcho(
 			http.MethodPost,
 			"/cars",
 			strings.NewReader(body),
 		)
 		request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-		carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
+		carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{})
 
 		assert.Error(t, carsResource.AddCar(context))
 	}
@@ -85,16 +106,18 @@ func TestAddCarNoVin(t *testing.T) {
 		"brand": "%s",
 		"model": "%s"
 	}
-	`, support.Car.Brand, support.Car.Model)
+	`,
+		entities.TestCarEntity.Brand,
+		entities.TestCarEntity.Model)
 
-	context, request, _ := support.CreateMockEchoSupport(
+	context, request, _ := CreateMockEcho(
 		http.MethodPost,
 		"/cars",
 		strings.NewReader(body),
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
+	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{})
 
 	assert.Error(t, carsResource.AddCar(context))
 }
@@ -106,16 +129,18 @@ func TestAddCarNoBrand(t *testing.T) {
 		"vin": "%s",
 		"model": "%s"
 	}
-	`, support.Car.Vin.Vin, support.Car.Model)
+	`,
+		entities.TestCarEntity.Vin.Vin,
+		entities.TestCarEntity.Model)
 
-	context, request, _ := support.CreateMockEchoSupport(
+	context, request, _ := CreateMockEcho(
 		http.MethodPost,
 		"/cars",
 		strings.NewReader(body),
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
+	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{})
 
 	assert.Error(t, carsResource.AddCar(context))
 }
@@ -127,68 +152,63 @@ func TestAddCarNoModel(t *testing.T) {
 		"vin": "%s",
 		"brand": "%s"
 	}
-	`, support.Car.Vin.Vin, support.Car.Brand)
+	`,
+		entities.TestCarEntity.Vin.Vin,
+		entities.TestCarEntity.Brand)
 
-	context, request, _ := support.CreateMockEchoSupport(
+	context, request, _ := CreateMockEcho(
 		http.MethodPost,
 		"/cars",
 		strings.NewReader(body),
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{})
+	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{})
 
 	assert.Error(t, carsResource.AddCar(context))
 }
 
 // Test that getting a specific car works
 func TestGetCar(t *testing.T) {
-	body := fmt.Sprintf(`{"Vin":{"Vin":"%s"},"Brand":"%s","Model":"%s"}
-`, support.Car.Vin.Vin, support.Car.Brand, support.Car.Model)
-
-	context, _, recorder := support.CreateMockEchoSupport(
+	context, _, recorder := CreateMockEcho(
 		http.MethodGet,
 		"/cars",
 		nil,
 	)
 	context.SetPath("/:vin")
 	context.SetParamNames("vin")
-	context.SetParamValues(support.Car.Vin.Vin)
+	context.SetParamValues(entities.TestCarEntity.Vin.Vin)
 
-	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{
-		"JH4DA3350KS009715": support.Car,
+	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{
+		"JH4DA3350KS009715": entities.TestCarEntity,
 	})
 
-	if assert.NoError(t, carsResource.GetCar(context, support.Car.Vin.Vin)) {
+	if assert.NoError(t, carsResource.GetCar(context, entities.TestCarEntity.Vin.Vin)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
-		assert.Equal(t, body, recorder.Body.String())
+		assert.Equal(t, CarBodyResponse, recorder.Body.String())
 	}
 }
 
 // Test that getting all cars works
 func TestGetCars(t *testing.T) {
-	carBody := fmt.Sprintf(`{"Vin":{"Vin":"%s"},"Brand":"%s","Model":"%s"}`, support.Car.Vin.Vin, support.Car.Brand, support.Car.Model)
-	carsBody := fmt.Sprintf(`[%s,%s,%s,%s]
-`, carBody, carBody, carBody, carBody)
-
-	context, _, recorder := support.CreateMockEchoSupport(
+	context, _, recorder := CreateMockEcho(
 		http.MethodGet,
 		"/cars",
 		nil,
 	)
 	context.SetPath("/:vin")
 	context.SetParamNames("vin")
-	context.SetParamValues(support.Car.Vin.Vin)
+	context.SetParamValues(entities.TestCarEntity.Vin.Vin)
 
-	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]model.Car{
-		"JH4DA3350KS009715": support.Car,
-		"JH4DA3350KS009716": support.Car,
-		"JH4DA3350KS009717": support.Car,
-		"JH4DA3350KS009718": support.Car,
+	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{
+		"JH4DA3350KS009715": entities.TestCarEntity,
+		"JH4DA3350KS009716": entities.TestCarEntity,
+		"JH4DA3350KS009717": entities.TestCarEntity,
+		"JH4DA3350KS009718": entities.TestCarEntity,
 	})
 
 	if assert.NoError(t, carsResource.GetCars(context)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
-		assert.Equal(t, carsBody, recorder.Body.String())
+		assert.Equal(t, CarsBody, recorder.Body.String())
 	}
 }

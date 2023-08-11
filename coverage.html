@@ -57,19 +57,21 @@
 				
 				<option value="file0">car/DM-Car/src/api/controller/CarController.go (80.0%)</option>
 				
-				<option value="file1">car/DM-Car/src/infrastructure/CarRepository.go (61.1%)</option>
+				<option value="file1">car/DM-Car/src/api/controller/MockEchoContext.go (100.0%)</option>
 				
-				<option value="file2">car/DM-Car/src/infrastructure/DatabaseConnection.go (53.2%)</option>
+				<option value="file2">car/DM-Car/src/infrastructure/CarRepository.go (50.9%)</option>
 				
-				<option value="file3">car/DM-Car/src/infrastructure/mappers/CarMapper.go (100.0%)</option>
+				<option value="file3">car/DM-Car/src/infrastructure/MockRepository.go (0.0%)</option>
 				
-				<option value="file4">car/DM-Car/src/logic/operations/AddCarOperation.go (80.0%)</option>
+				<option value="file4">car/DM-Car/src/infrastructure/mappers/CarMapper.go (100.0%)</option>
 				
-				<option value="file5">car/DM-Car/src/logic/operations/CarOperations.go (100.0%)</option>
+				<option value="file5">car/DM-Car/src/logic/operations/AddCarOperation.go (80.0%)</option>
 				
-				<option value="file6">car/DM-Car/src/logic/operations/GetCarOperation.go (75.0%)</option>
+				<option value="file6">car/DM-Car/src/logic/operations/CarOperations.go (100.0%)</option>
 				
-				<option value="file7">car/DM-Car/src/logic/operations/GetCarsOperation.go (75.0%)</option>
+				<option value="file7">car/DM-Car/src/logic/operations/GetCarOperation.go (75.0%)</option>
+				
+				<option value="file8">car/DM-Car/src/logic/operations/GetCarsOperation.go (75.0%)</option>
 				
 				</select>
 			</div>
@@ -166,15 +168,53 @@ func IsValidVin(vin stubs.Vin) bool <span class="cov8" title="1">{
         <span class="cov8" title="1">return match</span>
 }</pre>
 		
-		<pre class="file" id="file1" style="display: none">package infrastructure
+		<pre class="file" id="file1" style="display: none">package controller
 
 import (
-        "car/DM-Car/src/infrastructure/mappers"
-        "car/DM-Car/src/logic/model"
+        "io"
+        "net/http"
+        "net/http/httptest"
+
+        "github.com/labstack/echo/v4"
 )
 
+// Creates all resources to mock a running HTTP server
+func CreateMockEcho(method string, path string, body io.Reader) (echo.Context, *http.Request, *httptest.ResponseRecorder) <span class="cov8" title="1">{
+        e := echo.New()
+        request := httptest.NewRequest(method, path, body)
+        recorder := httptest.NewRecorder()
+        context := e.NewContext(request, recorder)
+        return context, request, recorder
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package infrastructure
+
+import (
+        "car/DM-Car/src/infrastructure/entities"
+        "car/DM-Car/src/infrastructure/mappers"
+        "car/DM-Car/src/logic/model"
+        "context"
+        "database/sql"
+        "errors"
+        "fmt"
+        "os"
+
+        "github.com/jackc/pgconn"
+        "github.com/jackc/pgx/v4"
+)
+
+// A common interface for the real and mocked database connection
+type PGXInterface interface {
+        Ping(ctx context.Context) error
+        Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+        Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
+        QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+        Close(ctx context.Context) error
+}
+
 type CarRepository struct {
-        connection DatabaseConnection
+        databaseConnection PGXInterface
 }
 
 func NewCarRepository() *CarRepository <span class="cov0" title="0">{
@@ -185,75 +225,23 @@ func NewCarRepository() *CarRepository <span class="cov0" title="0">{
         <span class="cov0" title="0">return &amp;CarRepository{connection}</span>
 }
 
-func (repository *CarRepository) AddCar(car model.Car) error <span class="cov8" title="1">{
-        carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
-        return repository.connection.AddCar(carPersistenceEntity)
-}</span>
-
-func (repository *CarRepository) GetCars() ([]model.Car, error) <span class="cov8" title="1">{
-        cars, err := repository.connection.GetCars()
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-        <span class="cov8" title="1">var result []model.Car
-        for i := range cars </span><span class="cov8" title="1">{
-                result = append(result, mappers.ConvertCarPersistenceEntityToCar(cars[i]))
-        }</span>
-        <span class="cov8" title="1">return result, nil</span>
-}
-
-func (repository *CarRepository) GetCar(vin string) (model.Car, error) <span class="cov8" title="1">{
-        car, err := repository.connection.GetCar(vin)
-        if err != nil </span><span class="cov0" title="0">{
-                return model.Car{}, err
-        }</span>
-        <span class="cov8" title="1">return mappers.ConvertCarPersistenceEntityToCar(car), nil</span>
-}
-
-// The CarRepository is responsible for closing the database connection
-func (repository *CarRepository) Close() error <span class="cov0" title="0">{
-        return repository.connection.Close()
-}</span>
-</pre>
-		
-		<pre class="file" id="file2" style="display: none">package infrastructure
-
-import (
-        "car/DM-Car/src/infrastructure/entities"
-        "car/DM-Car/src/support"
-        "context"
-        "database/sql"
-        "errors"
-        "fmt"
-        "os"
-
-        "github.com/jackc/pgx/v4"
-        _ "github.com/lib/pq"
-)
-
-// The database connection is stored as a custom interface to enable testing
-// the CarRepository
-type DatabaseConnection struct {
-        connection support.PGXInterface
-}
-
 // Establish a connection to the database
-func CreateDatabaseConnection() (DatabaseConnection, error) <span class="cov0" title="0">{
+func CreateDatabaseConnection() (PGXInterface, error) <span class="cov0" title="0">{
         url, err := getDatabaseURL()
         if err != nil </span><span class="cov0" title="0">{
-                return DatabaseConnection{}, err
+                return nil, err
         }</span>
         // Create the actual connection to the database
         <span class="cov0" title="0">connection, err := pgx.Connect(context.Background(), url)
         if err != nil </span><span class="cov0" title="0">{
-                return DatabaseConnection{}, err
+                return nil, err
         }</span>
         // Ping the database to confirm that the connection works
         <span class="cov0" title="0">err = connection.Ping(context.Background())
         if err != nil </span><span class="cov0" title="0">{
-                return DatabaseConnection{}, err
+                return nil, err
         }</span>
-        <span class="cov0" title="0">return DatabaseConnection{connection}, nil</span>
+        <span class="cov0" title="0">return connection, nil</span>
 }
 
 // The database url is of the format:
@@ -265,34 +253,37 @@ func getDatabaseURL() (string, error) <span class="cov0" title="0">{
         password := os.Getenv("DB_PASSWORD")
         dbname := os.Getenv("DB_NAME")
 
-        return fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, dbname), nil
+        return fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+                user,
+                password,
+                host,
+                port,
+                dbname), nil
 }</span>
 
-// A database connection needs to be closed as to not waste resources
-// This task is delegated to the CarRepository which holds the database connection
-func (connection *DatabaseConnection) Close() error <span class="cov0" title="0">{
-        return connection.connection.Close(context.Background())
-}</span>
-
-func (connection *DatabaseConnection) AddCar(car entities.CarPersistenceEntity) error <span class="cov8" title="1">{
+func (repository *CarRepository) AddCar(car model.Car) error <span class="cov8" title="1">{
+        carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
         statement := fmt.Sprintf(`
-        INSERT INTO public."Car" (vin, brand, model)
-        VALUES ('%s', '%s', '%s')
-`, car.Vin.Vin, car.Brand, car.Model)
+                INSERT INTO public."Car" (vin, brand, model)
+                VALUES ('%s', '%s', '%s')
+        `,
+                carPersistenceEntity.Vin.Vin,
+                carPersistenceEntity.Brand,
+                carPersistenceEntity.Model)
         // Exec performs mutations on the database
-        _, err := connection.connection.Exec(context.Background(), statement)
+        _, err := repository.databaseConnection.Exec(context.Background(), statement)
         return err
 }</span>
 
-func (connection *DatabaseConnection) GetCars() ([]entities.CarPersistenceEntity, error) <span class="cov8" title="1">{
+func (repository *CarRepository) GetCars() (model.Cars, error) <span class="cov8" title="1">{
         statement := `
                 SELECT *
                 FROM public."Car"
         `
         // Query can return multiple rows as a result
-        rows, err := connection.connection.Query(context.Background(), statement)
+        rows, err := repository.databaseConnection.Query(context.Background(), statement)
         if err != nil </span><span class="cov0" title="0">{
-                return nil, err
+                return model.Cars{}, err
         }</span>
         // Rows are a resource that need to be closed so that they can be free'd from memory
         <span class="cov8" title="1">defer rows.Close()
@@ -302,42 +293,92 @@ func (connection *DatabaseConnection) GetCars() ([]entities.CarPersistenceEntity
                 vin := entities.Vin{}
                 err = rows.Scan(&amp;vin.Vin, &amp;car.Brand, &amp;car.Model)
                 if err != nil </span><span class="cov0" title="0">{
-                        return nil, err
+                        return model.Cars{}, err
                 }</span>
                 <span class="cov8" title="1">car.Vin = vin
                 cars = append(cars, car)</span>
         }
         <span class="cov8" title="1">err = rows.Err()
         if err != nil </span><span class="cov0" title="0">{
-                return nil, err
+                return model.Cars{}, err
         }</span>
-        <span class="cov8" title="1">return cars, nil</span>
+        <span class="cov8" title="1">var result = mappers.ConvertCarsPersistenceEntityToCars(entities.CarsPersistenceEntity{
+                Cars: cars,
+        })
+        return result, nil</span>
 }
 
-func (connection *DatabaseConnection) GetCar(vin string) (entities.CarPersistenceEntity, error) <span class="cov8" title="1">{
+func (repository *CarRepository) GetCar(vin string) (model.Car, error) <span class="cov8" title="1">{
         car := entities.CarPersistenceEntity{}
         vinObject := entities.Vin{}
         statement := fmt.Sprintf(`
-        SELECT *
-        FROM public."Car"
-        WHERE vin LIKE '%s'
-`, vin)
+                SELECT *
+                FROM public."Car"
+                WHERE vin LIKE '%s'
+        `, vin)
         // QueryRow only returns a single row as a result
         // A single row does not need to be closed
-        row := connection.connection.QueryRow(context.Background(), statement)
+        row := repository.databaseConnection.QueryRow(context.Background(), statement)
         switch err := row.Scan(&amp;vinObject.Vin, &amp;car.Model, &amp;car.Brand); err </span>{
         case sql.ErrNoRows:<span class="cov0" title="0">
-                return entities.CarPersistenceEntity{}, errors.New("no car has the specified VIN")</span>
+                return model.Car{}, errors.New("no car has the specified VIN")</span>
         case nil:<span class="cov8" title="1">
                 car.Vin = vinObject
-                return car, nil</span>
+                return mappers.ConvertCarPersistenceEntityToCar(car), nil</span>
         default:<span class="cov0" title="0">
-                return entities.CarPersistenceEntity{}, errors.New("DatabaseConnection.FindByVin: Unknown error")</span>
+                return model.Car{}, errors.New("DatabaseConnection.FindByVin: Unknown error")</span>
         }
+}
+
+// The CarRepository is responsible for closing the database connection
+func (repository *CarRepository) Close() error <span class="cov0" title="0">{
+        return repository.databaseConnection.Close(context.Background())
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package infrastructure
+
+import (
+        "car/DM-Car/src/infrastructure/entities"
+        "car/DM-Car/src/infrastructure/mappers"
+        "car/DM-Car/src/logic/model"
+        "errors"
+)
+
+// A mocked version of CarRepository that uses a Map instead of persisting Cars to the database
+type MockCarRepository struct {
+        MockDatabase map[string]entities.CarPersistenceEntity
+}
+
+func (mockRepository *MockCarRepository) AddCar(car model.Car) error <span class="cov0" title="0">{
+        carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
+        if _, ok := mockRepository.MockDatabase[car.Vin.Vin]; ok </span><span class="cov0" title="0">{
+                return errors.New("vin already exists")
+        }</span>
+        <span class="cov0" title="0">mockRepository.MockDatabase[car.Vin.Vin] = carPersistenceEntity
+        return nil</span>
+}
+
+func (mockRepository *MockCarRepository) GetCars() (model.Cars, error) <span class="cov0" title="0">{
+        cars := entities.CarsPersistenceEntity{
+                Cars: []entities.CarPersistenceEntity{},
+        }
+        for _, value := range mockRepository.MockDatabase </span><span class="cov0" title="0">{
+                cars.Cars = append(cars.Cars, value)
+        }</span>
+        <span class="cov0" title="0">return mappers.ConvertCarsPersistenceEntityToCars(cars), nil</span>
+}
+
+func (mockRepository *MockCarRepository) GetCar(vin string) (model.Car, error) <span class="cov0" title="0">{
+        car, ok := mockRepository.MockDatabase[vin]
+        if ok </span><span class="cov0" title="0">{
+                return mappers.ConvertCarPersistenceEntityToCar(car), nil
+        }</span>
+        <span class="cov0" title="0">return model.Car{}, errors.New("not found")</span>
 }
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package mappers
+		<pre class="file" id="file4" style="display: none">package mappers
 
 import (
         "car/DM-Car/src/infrastructure/entities"
@@ -359,9 +400,33 @@ func ConvertCarPersistenceEntityToCar(carPersistenceEntity entities.CarPersisten
                 Model: carPersistenceEntity.Model,
         }
 }</span>
+
+func ConvertCarsToCarsPersistenceEntity(cars model.Cars) entities.CarsPersistenceEntity <span class="cov8" title="1">{
+        carsPersistenceEntity := entities.CarsPersistenceEntity{
+                Cars: []entities.CarPersistenceEntity{},
+        }
+        for _, car := range cars.Cars </span><span class="cov8" title="1">{
+                carsPersistenceEntity.Cars = append(
+                        carsPersistenceEntity.Cars,
+                        ConvertCarToCarPersistenceEntity(car))
+        }</span>
+        <span class="cov8" title="1">return carsPersistenceEntity</span>
+}
+
+func ConvertCarsPersistenceEntityToCars(carsPersistenceEntity entities.CarsPersistenceEntity) model.Cars <span class="cov8" title="1">{
+        cars := model.Cars{
+                Cars: []model.Car{},
+        }
+        for _, carPersistenceEntity := range carsPersistenceEntity.Cars </span><span class="cov8" title="1">{
+                cars.Cars = append(
+                        cars.Cars,
+                        ConvertCarPersistenceEntityToCar(carPersistenceEntity))
+        }</span>
+        <span class="cov8" title="1">return cars</span>
+}
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package operations
+		<pre class="file" id="file5" style="display: none">package operations
 
 import (
         "car/DM-Car/src/logic/model"
@@ -383,7 +448,7 @@ func (ops CarOperations) AddCar(vin string, brand string, carModel string) (mode
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package operations
+		<pre class="file" id="file6" style="display: none">package operations
 
 import "car/DM-Car/src/logic/model"
 
@@ -396,7 +461,7 @@ func NewCarOperations(repository model.CarRepositoryInterface) CarOperations <sp
 }</span>
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package operations
+		<pre class="file" id="file7" style="display: none">package operations
 
 import "car/DM-Car/src/logic/model"
 
@@ -410,14 +475,14 @@ func (ops CarOperations) GetCar(vin string) (model.Car, error) <span class="cov8
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package operations
+		<pre class="file" id="file8" style="display: none">package operations
 
 import "car/DM-Car/src/logic/model"
 
-func (ops CarOperations) GetCars() ([]model.Car, error) <span class="cov8" title="1">{
+func (ops CarOperations) GetCars() (model.Cars, error) <span class="cov8" title="1">{
         cars, err := ops.repository.GetCars()
         if err != nil </span><span class="cov0" title="0">{
-                return nil, err
+                return model.Cars{}, err
         }</span>
 
         <span class="cov8" title="1">return cars, nil</span>
