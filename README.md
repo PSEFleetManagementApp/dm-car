@@ -37,12 +37,12 @@ DB_NAME // Name of the database
 3. Call POST localhost:PORT/cars to create a new car. Example Payload:
 ```
 {
-   "vin": "JH4DA3350KS009715",
-   "brand": "Mercedes Benz",
-   "model": "S Klasse"
+   "vin": "JH4DB1561NS000565",
+   "brand": "VW",
+   "model": "ID2"
 }
 ```
-4. Call GET localhost:PORT/cars/<vin> to retrieve created car. Example Vin <code>JH4DA3350KS009715</code>
+4. Call GET localhost:PORT/cars/<vin> to retrieve created car. Example Vin <code>JH4DB1561NS000565</code>
 5. Call GET localhost:PORT/cars to retrieve all created cars.
 
 ## Run Tests

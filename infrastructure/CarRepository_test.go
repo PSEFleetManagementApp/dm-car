@@ -47,7 +47,7 @@ func TestAddCar(t *testing.T) {
 func TestGetCars(t *testing.T) {
 	mockDatabaseConnection := CreateMockDatabaseConnection(t)
 
-	rows := mockDatabaseConnection.NewRows([]string{"vin", "model", "brand"}).AddRow("JH4DA3350KS009715", "Mercedes-Benz", "S Klasse")
+	rows := mockDatabaseConnection.NewRows([]string{"vin", "model", "brand"}).AddRow("JH4DB1561NS000565", "VW", "ID2")
 	mockDatabaseConnection.ExpectQuery(`SELECT \* FROM public\."Car"`).WillReturnRows(rows)
 
 	carRepository := CarRepository{databaseConnection: mockDatabaseConnection}
@@ -63,7 +63,7 @@ func TestGetCars(t *testing.T) {
 func TestGetCar(t *testing.T) {
 	mockDatabaseConnection := CreateMockDatabaseConnection(t)
 
-	rows := mockDatabaseConnection.NewRows([]string{"vin", "model", "brand"}).AddRow("JH4DA3350KS009715", "Mercedes-Benz", "S Klasse")
+	rows := mockDatabaseConnection.NewRows([]string{"vin", "model", "brand"}).AddRow("JH4DB1561NS000565", "VW", "ID2")
 	mockDatabaseConnection.ExpectQuery(`SELECT \* FROM public\."Car" WHERE vin LIKE '.*?'`).WillReturnRows(rows)
 
 	carRepository := CarRepository{databaseConnection: mockDatabaseConnection}

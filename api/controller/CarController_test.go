@@ -14,13 +14,13 @@ import (
 )
 
 // A valid request body for a Car
-var CarBodyRequest = "{\"Vin\":\"JH4DA3350KS009715\",\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"}\n"
+var CarBodyRequest = "{\"Vin\":\"JH4DB1561NS000565\",\"Brand\":\"VW\",\"Model\":\"ID2\"}\n"
 
 // A valid response body for a Car
-var CarBodyResponse = "{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"}\n"
+var CarBodyResponse = "{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"}\n"
 
 // A valid response body for Cars
-var CarsBody = "{\"Cars\":[{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"},{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"},{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"},{\"Vin\":{\"Vin\":\"JH4DA3350KS009715\"},\"Brand\":\"Mercedes-Benz\",\"Model\":\"S Klasse\"}]}\n"
+var CarsBody = "{\"Cars\":[{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"JN8AZ2NC5B9300256\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"2FDKF38G3KCA42390\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"1GBJK39DX6E165432\"},\"Brand\":\"VW\",\"Model\":\"ID2\"}]}\n"
 
 // List of invalid Vins according to the domain constraints
 var InvalidVins = []string{
@@ -66,7 +66,7 @@ func TestAddCarWithExistingVin(t *testing.T) {
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{
-		"JH4DA3350KS009715": entities.TestCarEntity,
+		"JH4DB1561NS000565": entities.TestCarEntity,
 	})
 
 	assert.Error(t, carsResource.AddCar(context))
@@ -180,7 +180,7 @@ func TestGetCar(t *testing.T) {
 	context.SetParamValues(entities.TestCarEntity.Vin.Vin)
 
 	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{
-		"JH4DA3350KS009715": entities.TestCarEntity,
+		"JH4DB1561NS000565": entities.TestCarEntity,
 	})
 
 	if assert.NoError(t, carsResource.GetCar(context, entities.TestCarEntity.Vin.Vin)) {
@@ -201,10 +201,10 @@ func TestGetCars(t *testing.T) {
 	context.SetParamValues(entities.TestCarEntity.Vin.Vin)
 
 	carsResource, _, _ := CreateCarResourcesWithMockRepository(map[string]entities.CarPersistenceEntity{
-		"JH4DA3350KS009715": entities.TestCarEntity,
-		"JH4DA3350KS009716": entities.TestCarEntity,
-		"JH4DA3350KS009717": entities.TestCarEntity,
-		"JH4DA3350KS009718": entities.TestCarEntity,
+		"JH4DB1561NS000565": entities.TestCarEntity,
+		"JN8AZ2NC5B9300256": entities.TestCarEntity,
+		"2FDKF38G3KCA42390": entities.TestCarEntity,
+		"1GBJK39DX6E165432": entities.TestCarEntity,
 	})
 
 	if assert.NoError(t, carsResource.GetCars(context)) {

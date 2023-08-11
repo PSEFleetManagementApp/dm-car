@@ -3,22 +3,22 @@ package entities
 // Collection of data for testing
 
 var TestCarEntity = CarPersistenceEntity{
-	Vin:   Vin{Vin: "JH4DA3350KS009715"},
-	Brand: "Mercedes-Benz",
-	Model: "S Klasse",
+	Vin:   Vin{Vin: "JH4DB1561NS000565"},
+	Brand: "VW",
+	Model: "ID2",
 }
 
 var TestCarsEntity = CarsPersistenceEntity{
 	Cars: []CarPersistenceEntity{
 		{
-			Vin:   Vin{Vin: "JH4DA3350KS009715"},
-			Brand: "Mercedes-Benz",
-			Model: "S Klasse",
+			Vin:   Vin{Vin: "JH4DB1561NS000565"},
+			Brand: "VW",
+			Model: "ID2",
 		},
 		{
-			Vin:   Vin{Vin: "2C4GP44362R700796"},
-			Brand: "Mercedes-Benz",
-			Model: "E Klasse",
+			Vin:   Vin{Vin: "JN8AZ2NC5B9300256"},
+			Brand: "VW",
+			Model: "ID2",
 		},
 	},
 }

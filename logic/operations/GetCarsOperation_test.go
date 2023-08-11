@@ -12,7 +12,7 @@ import (
 // Test that the operation of getting all existing cars works
 func TestGetCars(t *testing.T) {
 	carRepository := infrastructure.MockCarRepository{MockDatabase: map[string]entities.CarPersistenceEntity{
-		"JH4DA3350KS009715": entities.TestCarEntity,
+		"JH4DB1561NS000565": entities.TestCarEntity,
 	}}
 	carOperations := NewCarOperations(&carRepository)
 
