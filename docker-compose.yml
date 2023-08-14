@@ -1,0 +1,17 @@
+version: '3'
+services:
+  dm-car:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15.3
+    environment:
+      - POSTGRES_PASSWORD=password
