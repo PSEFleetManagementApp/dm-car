@@ -1,0 +1,101 @@
+base-chart:
+  # General
+  fullnameOverride: ""
+  nameOverride: ""
+  replicaCount: 1
+
+
+  # Image Settings
+  image:
+    repository: $IMAGE_FULL_NAME
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+
+  # Custom Environment Variables
+  extraEnvVars: []
+
+  # Network Configuration
+  ports:
+  http:
+    port: 80  
+    protocol: TCP
+    gRPC:
+      enabled: false
+      type: gRPC
+    service:
+      type: ClusterIP
+      annotations: {}
+    ingress:
+      enabled: true
+      hosts:
+        - host: $INGRESS_HOSTNAME
+          paths: [/]
+      tlsEnabled: true
+      annotations: {}
+  probe:
+    enabled: false
+    liveness:
+      httpGet:
+        path: /
+        port: http
+    readiness:
+      httpGet:
+        path: /
+        port: http
+
+  # Databases
+  mongodb: 
+    enabled: false
+    auth:
+      enabled: true
+      username: mongodb
+      password: mongodb
+      database: mongoDB
+    resources:
+      limits: 
+        cpu: 900m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+    useStatefulSet: false
+    readinessProbe:
+      timeoutSeconds: 30
+    startupProbe:
+      timeoutSeconds: 30
+    
+  postgresql: 
+    enabled: false
+    auth:
+      enablePostgresUser: false
+      username: postgres
+      password: postgres
+      database: postgresDB
+    resources:
+      limits:
+        cpu: 250m
+        memory: 1Gi
+      requests:
+        cpu: 150m
+        memory: 256Mi
+
+  # Resource Management
+  resources:
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  # Security and Permissions
+  securityContext: {}
+  serviceAccount:
+    create: false
+    name:
+  podSecurityContext: {}
+    
+  # Node Management
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []

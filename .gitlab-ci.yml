@@ -1,0 +1,16 @@
+# Note that the prefix in the npm commands forces npm to use the src folder.
+include:
+  - project: kit/cm/teaching/umedocumentation/cicd/pipeline
+    ref: "1"
+    file : base.yaml
+  - project: kit/cm/teaching/umedocumentation/cicd/pipeline
+    ref: "1"
+    file : image.yaml
+  - project: kit/cm/teaching/umedocumentation/cicd/pipeline
+    ref: "1"
+    file : argocd-deploy.yaml
+  - project: kit/cm/teaching/umedocumentation/cicd/pipeline
+    ref: "1"
+    file : go.yaml
+  - local: 'variables.yaml'
+
