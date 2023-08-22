@@ -65,12 +65,11 @@ base-chart:
       timeoutSeconds: 30
     
   postgresql: 
-    enabled: false
+    enabled: true
     auth:
-      enablePostgresUser: false
       username: postgres
       password: postgres
-      database: postgresDB
+      database: postgres
     resources:
       limits:
         cpu: 250m
