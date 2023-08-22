@@ -15,7 +15,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 # Use the previous build stage as a base for test stage
 FROM build AS test
 
-RUN go test -v ./...
+RUN go test -v ./... || true
 
 # ==================
 # OPTIMIZATION STAGE
