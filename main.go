@@ -32,7 +32,7 @@ func main() {
 	// Start the server
 	var portNumber, err = strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
-		e.Logger.Fatal("invalid port number")
+		e.Logger.Fatal("The port number configuration is incorrect. Did you set the environment variable PORT?")
 	}
 	var port = flag.Int("port", portNumber, "Port for local server")
 	e.Logger.Fatal(e.Start(fmt.Sprintf("0.0.0.0:%d", *port)))
