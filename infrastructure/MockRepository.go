@@ -31,8 +31,8 @@ func (mockRepository *MockCarRepository) GetCars() (model.Cars, error) {
 	return mappers.ConvertCarsPersistenceEntityToCars(cars), nil
 }
 
-func (mockRepository *MockCarRepository) GetCar(vin string) (model.Car, error) {
-	car, ok := mockRepository.MockDatabase[vin]
+func (mockRepository *MockCarRepository) GetCar(vin model.Vin) (model.Car, error) {
+	car, ok := mockRepository.MockDatabase[vin.Vin]
 	if ok {
 		return mappers.ConvertCarPersistenceEntityToCar(car), nil
 	}

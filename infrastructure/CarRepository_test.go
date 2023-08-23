@@ -67,7 +67,7 @@ func TestGetCar(t *testing.T) {
 	mockDatabaseConnection.ExpectQuery(`SELECT \* FROM public\."Car" WHERE vin LIKE '.*?'`).WillReturnRows(rows)
 
 	carRepository := CarRepository{databaseConnection: mockDatabaseConnection}
-	if _, err := carRepository.GetCar(model.TestCarModel.Vin.Vin); err != nil {
+	if _, err := carRepository.GetCar(model.TestCarModel.Vin); err != nil {
 		t.Errorf("did not expect error: %s", err)
 	}
 
