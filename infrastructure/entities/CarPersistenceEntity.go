@@ -2,7 +2,7 @@ package entities
 
 // Car model for persistence
 type CarPersistenceEntity struct {
-	Vin   Vin
+	Vin   VinPersistenceEntity
 	Brand string
 	Model string
 }

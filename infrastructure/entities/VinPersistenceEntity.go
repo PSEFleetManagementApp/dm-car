@@ -1,6 +1,6 @@
 package entities
 
-// Vin model for persistence
-type Vin struct {
+// VinPersistenceEntity model for persistence
+type VinPersistenceEntity struct {
 	Vin string
 }

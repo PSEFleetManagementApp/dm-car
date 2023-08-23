@@ -100,7 +100,7 @@ func (repository *CarRepository) GetCars() (model.Cars, error) {
 	cars := []entities.CarPersistenceEntity{}
 	for rows.Next() {
 		car := entities.CarPersistenceEntity{}
-		vin := entities.Vin{}
+		vin := entities.VinPersistenceEntity{}
 		err = rows.Scan(&vin.Vin, &car.Brand, &car.Model)
 		if err != nil {
 			return model.Cars{}, err
@@ -120,7 +120,7 @@ func (repository *CarRepository) GetCars() (model.Cars, error) {
 
 func (repository *CarRepository) GetCar(vin model.Vin) (model.Car, error) {
 	car := entities.CarPersistenceEntity{}
-	vinObject := entities.Vin{}
+	vinObject := entities.VinPersistenceEntity{}
 	statement := fmt.Sprintf(`
 		SELECT *
 		FROM public."Car"
