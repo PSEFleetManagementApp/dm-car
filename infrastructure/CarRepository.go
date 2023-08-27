@@ -118,14 +118,14 @@ func (repository *CarRepository) GetCars() (model.Cars, error) {
 	return result, nil
 }
 
-func (repository *CarRepository) GetCar(vin string) (model.Car, error) {
+func (repository *CarRepository) GetCar(vin model.Vin) (model.Car, error) {
 	car := entities.CarPersistenceEntity{}
 	vinObject := entities.Vin{}
 	statement := fmt.Sprintf(`
 		SELECT *
 		FROM public."Car"
 		WHERE vin LIKE '%s'
-	`, vin)
+	`, vin.Vin)
 	// QueryRow only returns a single row as a result
 	// A single row does not need to be closed
 	row := repository.databaseConnection.QueryRow(context.Background(), statement)
