@@ -28,7 +28,7 @@ type CarRepository struct {
 }
 
 func NewCarRepository() *CarRepository {
-	connection, err := CreateDatabaseConnection()
+	connection, err := createDatabaseConnection()
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +36,7 @@ func NewCarRepository() *CarRepository {
 }
 
 // Establish a connection to the database
-func CreateDatabaseConnection() (PGXInterface, error) {
+func createDatabaseConnection() (PGXInterface, error) {
 	url, err := getDatabaseURL()
 	if err != nil {
 		return nil, err
