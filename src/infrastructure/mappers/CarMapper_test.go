@@ -1,8 +1,8 @@
 package mappers
 
 import (
-	"car/src/infrastructure/entities"
-	"car/src/logic/model"
+	"car/infrastructure/persistenceentities"
+	"car/logic/model"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,10 +16,10 @@ func TestConvertCarToCarPersistenceEntity(t *testing.T) {
 }
 
 func TestConvertCarPersistenceEntityToCar(t *testing.T) {
-	carModel := ConvertCarPersistenceEntityToCar(entities.TestCarEntity)
-	assert.Equal(t, entities.TestCarEntity.Vin.Vin, carModel.Vin.Vin)
-	assert.Equal(t, entities.TestCarEntity.Brand, carModel.Brand)
-	assert.Equal(t, entities.TestCarEntity.Model, carModel.Model)
+	carModel := ConvertCarPersistenceEntityToCar(persistenceentities.TestCarEntity)
+	assert.Equal(t, persistenceentities.TestCarEntity.Vin.Vin, carModel.Vin.Vin)
+	assert.Equal(t, persistenceentities.TestCarEntity.Brand, carModel.Brand)
+	assert.Equal(t, persistenceentities.TestCarEntity.Model, carModel.Model)
 }
 
 func TestConvertCarsToCarsPersistenceEntity(t *testing.T) {
@@ -32,8 +32,8 @@ func TestConvertCarsToCarsPersistenceEntity(t *testing.T) {
 }
 
 func TestConvertCarsPersistenceEntityToCars(t *testing.T) {
-	carsModel := ConvertCarsPersistenceEntityToCars(entities.TestCarsEntity)
-	for index, value := range entities.TestCarsEntity.Cars {
+	carsModel := ConvertCarsPersistenceEntityToCars(persistenceentities.TestCarsEntity)
+	for index, value := range persistenceentities.TestCarsEntity.Cars {
 		assert.Equal(t, value.Vin.Vin, carsModel.Cars[index].Vin.Vin)
 		assert.Equal(t, value.Brand, carsModel.Cars[index].Brand)
 		assert.Equal(t, value.Model, carsModel.Cars[index].Model)

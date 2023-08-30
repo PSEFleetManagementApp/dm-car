@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	"car/src/logic/model"
+	"car/logic/model"
 	"context"
 	"testing"
 

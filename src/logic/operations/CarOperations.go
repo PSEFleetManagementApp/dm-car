@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"car/src/logic/model"
+	"car/logic/model"
 )
 
 type CarOperations struct {

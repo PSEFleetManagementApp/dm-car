@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"car/src/infrastructure"
-	"car/src/infrastructure/entities"
-	"car/src/logic/model"
+	"car/infrastructure"
+	"car/infrastructure/persistenceentities"
+	"car/logic/model"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +11,7 @@ import (
 
 // Test that the operation of adding a car works
 func TestAddCar(t *testing.T) {
-	carRepository := infrastructure.MockCarRepository{MockDatabase: map[string]entities.CarPersistenceEntity{}}
+	carRepository := infrastructure.MockCarRepository{MockDatabase: map[string]persistenceentities.CarPersistenceEntity{}}
 	carOperations := NewCarOperations(&carRepository)
 
 	carResult, err := carOperations.AddCar(model.TestCarModel.Vin.Vin, model.TestCarModel.Brand, model.TestCarModel.Model)

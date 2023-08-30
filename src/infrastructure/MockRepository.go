@@ -1,18 +1,18 @@
 package infrastructure
 
 import (
-	"car/src/infrastructure/mappers"
-	entities2 "car/src/infrastructure/persistenceentities"
-	model2 "car/src/logic/model"
+	"car/infrastructure/mappers"
+	"car/infrastructure/persistenceentities"
+	"car/logic/model"
 	"errors"
 )
 
 // A mocked version of CarRepository that uses a Map instead of persisting Cars to the database
 type MockCarRepository struct {
-	MockDatabase map[string]entities2.CarPersistenceEntity
+	MockDatabase map[string]persistenceentities.CarPersistenceEntity
 }
 
-func (mockRepository *MockCarRepository) AddCar(car model2.Car) error {
+func (mockRepository *MockCarRepository) AddCar(car model.Car) error {
 	carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
 	if _, ok := mockRepository.MockDatabase[car.Vin.Vin]; ok {
 		return errors.New("vin already exists")
@@ -21,9 +21,9 @@ func (mockRepository *MockCarRepository) AddCar(car model2.Car) error {
 	return nil
 }
 
-func (mockRepository *MockCarRepository) GetCars() (model2.Cars, error) {
-	cars := entities2.CarsPersistenceEntity{
-		Cars: []entities2.CarPersistenceEntity{},
+func (mockRepository *MockCarRepository) GetCars() (model.Cars, error) {
+	cars := persistenceentities.CarsPersistenceEntity{
+		Cars: []persistenceentities.CarPersistenceEntity{},
 	}
 	for _, value := range mockRepository.MockDatabase {
 		cars.Cars = append(cars.Cars, value)
@@ -31,10 +31,10 @@ func (mockRepository *MockCarRepository) GetCars() (model2.Cars, error) {
 	return mappers.ConvertCarsPersistenceEntityToCars(cars), nil
 }
 
-func (mockRepository *MockCarRepository) GetCar(vin model2.Vin) (model2.Car, error) {
+func (mockRepository *MockCarRepository) GetCar(vin model.Vin) (model.Car, error) {
 	car, ok := mockRepository.MockDatabase[vin.Vin]
 	if ok {
 		return mappers.ConvertCarPersistenceEntityToCar(car), nil
 	}
-	return model2.Car{}, errors.New("not found")
+	return model.Car{}, errors.New("not found")
 }

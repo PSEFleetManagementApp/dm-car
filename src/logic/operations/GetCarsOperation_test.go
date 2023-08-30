@@ -1,9 +1,9 @@
 package operations
 
 import (
-	"car/src/infrastructure"
-	"car/src/infrastructure/mappers"
-	entities2 "car/src/infrastructure/persistenceentities"
+	"car/infrastructure"
+	"car/infrastructure/mappers"
+	"car/infrastructure/persistenceentities"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,12 +11,12 @@ import (
 
 // Test that the operation of getting all existing cars works
 func TestGetCars(t *testing.T) {
-	carRepository := infrastructure.MockCarRepository{MockDatabase: map[string]entities2.CarPersistenceEntity{
-		"JH4DB1561NS000565": entities2.TestCarEntity,
+	carRepository := infrastructure.MockCarRepository{MockDatabase: map[string]persistenceentities.CarPersistenceEntity{
+		"JH4DB1561NS000565": persistenceentities.TestCarEntity,
 	}}
 	carOperations := NewCarOperations(&carRepository)
 
 	cars, err := carOperations.GetCars()
-	assert.Contains(t, cars.Cars, mappers.ConvertCarPersistenceEntityToCar(entities2.TestCarEntity))
+	assert.Contains(t, cars.Cars, mappers.ConvertCarPersistenceEntityToCar(persistenceentities.TestCarEntity))
 	assert.Equal(t, err, nil)
 }

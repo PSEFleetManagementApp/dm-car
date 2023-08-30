@@ -1,7 +1,7 @@
 package operations
 
 import (
-	"car/src/logic/model"
+	"car/logic/model"
 )
 
 func (ops CarOperations) GetCars() (model.Cars, error) {

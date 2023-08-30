@@ -1,7 +1,7 @@
 package operations
 
 import (
-	model2 "car/src/logic/model"
+	model2 "car/logic/model"
 )
 
 type CarOperationsInterface interface {
