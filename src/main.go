@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	// Create the DatabaseRepository
+	// Create the PostgresRepository
 	// This also establishes the connection to the database
 	databaseRepository := infrastructure.NewDatabaseRepository()
 	// Close the connection to the database when databaseRepository goes out of scope

@@ -7,7 +7,7 @@ import (
 	"errors"
 )
 
-// A mocked version of DatabaseRepository that uses a Map instead of persisting Cars to the database
+// A mocked version of PostgresRepository that uses a Map instead of persisting Cars to the database
 type InMemoryRepository struct {
 	Cars map[string]persistenceentities.CarPersistenceEntity
 }

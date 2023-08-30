@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	"car/infrastructure/mappers"
-	entities2 "car/infrastructure/persistenceentities"
+	"car/infrastructure/persistenceentities"
 	"car/logic/model"
 	"context"
 	"database/sql"
@@ -23,16 +23,16 @@ type PGXInterface interface {
 	Close(ctx context.Context) error
 }
 
-type DatabaseRepository struct {
+type PostgresRepository struct {
 	databaseConnection PGXInterface
 }
 
-func NewDatabaseRepository() *DatabaseRepository {
+func NewDatabaseRepository() *PostgresRepository {
 	connection, err := createDatabaseConnection()
 	if err != nil {
 		panic(err)
 	}
-	return &DatabaseRepository{connection}
+	return &PostgresRepository{connection}
 }
 
 // Establish a connection to the database
@@ -68,7 +68,7 @@ func getDatabaseURL() string {
 		dbname)
 }
 
-func (repository *DatabaseRepository) AddCar(car model.Car) error {
+func (repository *PostgresRepository) AddCar(car model.Car) error {
 	carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
 	statement := fmt.Sprintf(`
 		INSERT INTO public."Car" (vin, brand, model)
@@ -82,7 +82,7 @@ func (repository *DatabaseRepository) AddCar(car model.Car) error {
 	return err
 }
 
-func (repository *DatabaseRepository) GetCars() (model.Cars, error) {
+func (repository *PostgresRepository) GetCars() (model.Cars, error) {
 	statement := `
 		SELECT *
 		FROM public."Car"
@@ -94,10 +94,10 @@ func (repository *DatabaseRepository) GetCars() (model.Cars, error) {
 	}
 	// Rows are a resource that need to be closed so that they can be free'd from memory
 	defer rows.Close()
-	cars := []entities2.CarPersistenceEntity{}
+	cars := []persistenceentities.CarPersistenceEntity{}
 	for rows.Next() {
-		car := entities2.CarPersistenceEntity{}
-		vin := entities2.VinPersistenceEntity{}
+		car := persistenceentities.CarPersistenceEntity{}
+		vin := persistenceentities.VinPersistenceEntity{}
 		err = rows.Scan(&vin.Vin, &car.Brand, &car.Model)
 		if err != nil {
 			return model.Cars{}, err
@@ -109,15 +109,15 @@ func (repository *DatabaseRepository) GetCars() (model.Cars, error) {
 	if err != nil {
 		return model.Cars{}, err
 	}
-	var result = mappers.ConvertCarsPersistenceEntityToCars(entities2.CarsPersistenceEntity{
+	var result = mappers.ConvertCarsPersistenceEntityToCars(persistenceentities.CarsPersistenceEntity{
 		Cars: cars,
 	})
 	return result, nil
 }
 
-func (repository *DatabaseRepository) GetCar(vin model.Vin) (model.Car, error) {
-	car := entities2.CarPersistenceEntity{}
-	vinObject := entities2.VinPersistenceEntity{}
+func (repository *PostgresRepository) GetCar(vin model.Vin) (model.Car, error) {
+	car := persistenceentities.CarPersistenceEntity{}
+	vinObject := persistenceentities.VinPersistenceEntity{}
 	statement := fmt.Sprintf(`
 		SELECT *
 		FROM public."Car"
@@ -137,7 +137,7 @@ func (repository *DatabaseRepository) GetCar(vin model.Vin) (model.Car, error) {
 	}
 }
 
-// The DatabaseRepository is responsible for closing the database connection
-func (repository *DatabaseRepository) Close() error {
+// The PostgresRepository is responsible for closing the database connection
+func (repository *PostgresRepository) Close() error {
 	return repository.databaseConnection.Close(context.Background())
 }
