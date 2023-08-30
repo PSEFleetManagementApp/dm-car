@@ -11,7 +11,7 @@ import (
 
 // Test that the operation of getting all existing cars works
 func TestGetCars(t *testing.T) {
-	carRepository := infrastructure.MockCarRepository{MockDatabase: map[string]persistenceentities.CarPersistenceEntity{
+	carRepository := infrastructure.InMemoryRepository{Cars: map[string]persistenceentities.CarPersistenceEntity{
 		"JH4DB1561NS000565": persistenceentities.TestCarEntity,
 	}}
 	carOperations := NewCarOperations(&carRepository)

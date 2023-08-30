@@ -11,7 +11,7 @@ import (
 
 // Test that the operation of getting an existing car by it's Vin works
 func TestGetCar(t *testing.T) {
-	carRepository := infrastructure.MockCarRepository{MockDatabase: map[string]persistenceentities.CarPersistenceEntity{
+	carRepository := infrastructure.InMemoryRepository{Cars: map[string]persistenceentities.CarPersistenceEntity{
 		"JH4DB1561NS000565": persistenceentities.TestCarEntity,
 	}}
 	carOperations := NewCarOperations(&carRepository)

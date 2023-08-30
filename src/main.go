@@ -13,15 +13,15 @@ import (
 )
 
 func main() {
-	// Create the CarRepository
+	// Create the DatabaseRepository
 	// This also establishes the connection to the database
-	carRepository := infrastructure.NewCarRepository()
-	// Close the connection to the database when carRepository goes out of scope
+	databaseRepository := infrastructure.NewDatabaseRepository()
+	// Close the connection to the database when databaseRepository goes out of scope
 	// This happens when the program exists
-	defer carRepository.Close()
+	defer databaseRepository.Close()
 
 	// Create the CarOperations and the CarController
-	carOperations := operations.NewCarOperations(carRepository)
+	carOperations := operations.NewCarOperations(databaseRepository)
 	carsResource := controller.NewCarController(carOperations)
 
 	// Register the CarController with the server for handling it's routes

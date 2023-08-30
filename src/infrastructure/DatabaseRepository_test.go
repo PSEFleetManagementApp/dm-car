@@ -34,7 +34,7 @@ func TestAddCar(t *testing.T) {
 
 	mockDatabaseConnection.ExpectExec(`INSERT INTO public\."Car" \(vin, brand, model\) VALUES \('.*?', '.*?', '.*?'\)`).WillReturnResult(pgxmock.NewResult("INSERT", 1))
 
-	carRepository := CarRepository{databaseConnection: mockDatabaseConnection}
+	carRepository := DatabaseRepository{databaseConnection: mockDatabaseConnection}
 	if err := carRepository.AddCar(model.TestCarModel); err != nil {
 		t.Errorf("did not expect error: %s", err)
 	}
@@ -50,7 +50,7 @@ func TestGetCars(t *testing.T) {
 	rows := mockDatabaseConnection.NewRows([]string{"vin", "model", "brand"}).AddRow("JH4DB1561NS000565", "VW", "ID2")
 	mockDatabaseConnection.ExpectQuery(`SELECT \* FROM public\."Car"`).WillReturnRows(rows)
 
-	carRepository := CarRepository{databaseConnection: mockDatabaseConnection}
+	carRepository := DatabaseRepository{databaseConnection: mockDatabaseConnection}
 	if _, err := carRepository.GetCars(); err != nil {
 		t.Errorf("did not expect error: %s", err)
 	}
@@ -66,7 +66,7 @@ func TestGetCar(t *testing.T) {
 	rows := mockDatabaseConnection.NewRows([]string{"vin", "model", "brand"}).AddRow("JH4DB1561NS000565", "VW", "ID2")
 	mockDatabaseConnection.ExpectQuery(`SELECT \* FROM public\."Car" WHERE vin LIKE '.*?'`).WillReturnRows(rows)
 
-	carRepository := CarRepository{databaseConnection: mockDatabaseConnection}
+	carRepository := DatabaseRepository{databaseConnection: mockDatabaseConnection}
 	if _, err := carRepository.GetCar(model.TestCarModel.Vin); err != nil {
 		t.Errorf("did not expect error: %s", err)
 	}

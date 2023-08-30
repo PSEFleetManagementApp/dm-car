@@ -23,16 +23,16 @@ type PGXInterface interface {
 	Close(ctx context.Context) error
 }
 
-type CarRepository struct {
+type DatabaseRepository struct {
 	databaseConnection PGXInterface
 }
 
-func NewCarRepository() *CarRepository {
+func NewDatabaseRepository() *DatabaseRepository {
 	connection, err := createDatabaseConnection()
 	if err != nil {
 		panic(err)
 	}
-	return &CarRepository{connection}
+	return &DatabaseRepository{connection}
 }
 
 // Establish a connection to the database
@@ -68,7 +68,7 @@ func getDatabaseURL() string {
 		dbname)
 }
 
-func (repository *CarRepository) AddCar(car model.Car) error {
+func (repository *DatabaseRepository) AddCar(car model.Car) error {
 	carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
 	statement := fmt.Sprintf(`
 		INSERT INTO public."Car" (vin, brand, model)
@@ -82,7 +82,7 @@ func (repository *CarRepository) AddCar(car model.Car) error {
 	return err
 }
 
-func (repository *CarRepository) GetCars() (model.Cars, error) {
+func (repository *DatabaseRepository) GetCars() (model.Cars, error) {
 	statement := `
 		SELECT *
 		FROM public."Car"
@@ -115,7 +115,7 @@ func (repository *CarRepository) GetCars() (model.Cars, error) {
 	return result, nil
 }
 
-func (repository *CarRepository) GetCar(vin model.Vin) (model.Car, error) {
+func (repository *DatabaseRepository) GetCar(vin model.Vin) (model.Car, error) {
 	car := entities2.CarPersistenceEntity{}
 	vinObject := entities2.VinPersistenceEntity{}
 	statement := fmt.Sprintf(`
@@ -137,7 +137,7 @@ func (repository *CarRepository) GetCar(vin model.Vin) (model.Car, error) {
 	}
 }
 
-// The CarRepository is responsible for closing the database connection
-func (repository *CarRepository) Close() error {
+// The DatabaseRepository is responsible for closing the database connection
+func (repository *DatabaseRepository) Close() error {
 	return repository.databaseConnection.Close(context.Background())
 }
