@@ -1,16 +1,14 @@
 package main
 
 import (
-	"car/api/controller"
-	"car/api/stubs"
-	"car/infrastructure"
-	"car/logic/operations"
+	"car/src/api/controller"
+	"car/src/api/stubs"
+	"car/src/infrastructure"
+	"car/src/logic/operations"
 	"flag"
 	"fmt"
 	"os"
 	"strconv"
-
-	"github.com/labstack/echo/v4"
 )
 
 func main() {

@@ -1,19 +1,17 @@
 package controller
 
 import (
-	"car/api/stubs"
-	"car/logic/operations"
+	"car/src/api/stubs"
+	operations2 "car/src/logic/operations"
 	"errors"
 	"net/http"
-
-	"github.com/labstack/echo/v4"
 )
 
 type CarController struct {
-	ops operations.CarOperationsInterface
+	ops operations2.CarOperationsInterface
 }
 
-func NewCarController(ops operations.CarOperations) CarController {
+func NewCarController(ops operations2.CarOperations) CarController {
 	return CarController{ops: ops}
 }
 

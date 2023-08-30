@@ -1,9 +1,9 @@
 package infrastructure
 
 import (
-	"car/infrastructure/entities"
-	"car/infrastructure/mappers"
-	"car/logic/model"
+	entities2 "car/src/infrastructure/entities"
+	"car/src/infrastructure/mappers"
+	model2 "car/src/logic/model"
 	"context"
 	"database/sql"
 	"errors"
@@ -11,7 +11,6 @@ import (
 	"os"
 
 	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
 )
 
 // A common interface for the real and mocked database connection
@@ -71,7 +70,7 @@ func getDatabaseURL() (string, error) {
 		dbname), nil
 }
 
-func (repository *CarRepository) AddCar(car model.Car) error {
+func (repository *CarRepository) AddCar(car model2.Car) error {
 	carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
 	statement := fmt.Sprintf(`
 		INSERT INTO public."Car" (vin, brand, model)
@@ -85,7 +84,7 @@ func (repository *CarRepository) AddCar(car model.Car) error {
 	return err
 }
 
-func (repository *CarRepository) GetCars() (model.Cars, error) {
+func (repository *CarRepository) GetCars() (model2.Cars, error) {
 	statement := `
 		SELECT *
 		FROM public."Car"
@@ -93,34 +92,34 @@ func (repository *CarRepository) GetCars() (model.Cars, error) {
 	// Query can return multiple rows as a result
 	rows, err := repository.databaseConnection.Query(context.Background(), statement)
 	if err != nil {
-		return model.Cars{}, err
+		return model2.Cars{}, err
 	}
 	// Rows are a resource that need to be closed so that they can be free'd from memory
 	defer rows.Close()
-	cars := []entities.CarPersistenceEntity{}
+	cars := []entities2.CarPersistenceEntity{}
 	for rows.Next() {
-		car := entities.CarPersistenceEntity{}
-		vin := entities.VinPersistenceEntity{}
+		car := entities2.CarPersistenceEntity{}
+		vin := entities2.VinPersistenceEntity{}
 		err = rows.Scan(&vin.Vin, &car.Brand, &car.Model)
 		if err != nil {
-			return model.Cars{}, err
+			return model2.Cars{}, err
 		}
 		car.Vin = vin
 		cars = append(cars, car)
 	}
 	err = rows.Err()
 	if err != nil {
-		return model.Cars{}, err
+		return model2.Cars{}, err
 	}
-	var result = mappers.ConvertCarsPersistenceEntityToCars(entities.CarsPersistenceEntity{
+	var result = mappers.ConvertCarsPersistenceEntityToCars(entities2.CarsPersistenceEntity{
 		Cars: cars,
 	})
 	return result, nil
 }
 
-func (repository *CarRepository) GetCar(vin model.Vin) (model.Car, error) {
-	car := entities.CarPersistenceEntity{}
-	vinObject := entities.VinPersistenceEntity{}
+func (repository *CarRepository) GetCar(vin model2.Vin) (model2.Car, error) {
+	car := entities2.CarPersistenceEntity{}
+	vinObject := entities2.VinPersistenceEntity{}
 	statement := fmt.Sprintf(`
 		SELECT *
 		FROM public."Car"
@@ -131,12 +130,12 @@ func (repository *CarRepository) GetCar(vin model.Vin) (model.Car, error) {
 	row := repository.databaseConnection.QueryRow(context.Background(), statement)
 	switch err := row.Scan(&vinObject.Vin, &car.Model, &car.Brand); err {
 	case sql.ErrNoRows:
-		return model.Car{}, errors.New("no car has the specified VIN")
+		return model2.Car{}, errors.New("no car has the specified VIN")
 	case nil:
 		car.Vin = vinObject
 		return mappers.ConvertCarPersistenceEntityToCar(car), nil
 	default:
-		return model.Car{}, errors.New("DatabaseConnection.FindByVin: Unknown error")
+		return model2.Car{}, errors.New("DatabaseConnection.FindByVin: Unknown error")
 	}
 }
 
