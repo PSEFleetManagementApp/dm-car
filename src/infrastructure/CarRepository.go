@@ -37,10 +37,7 @@ func NewCarRepository() *CarRepository {
 
 // Establish a connection to the database
 func createDatabaseConnection() (PGXInterface, error) {
-	url, err := getDatabaseURL()
-	if err != nil {
-		return nil, err
-	}
+	url := getDatabaseURL()
 	// Create the actual connection to the database
 	connection, err := pgx.Connect(context.Background(), url)
 	if err != nil {
@@ -56,7 +53,7 @@ func createDatabaseConnection() (PGXInterface, error) {
 
 // The database url is of the format:
 // postgres://USER:PASSWORD@HOST:PORT/DB_NAME
-func getDatabaseURL() (string, error) {
+func getDatabaseURL() string {
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
 	user := os.Getenv("POSTGRES_USER")
@@ -68,7 +65,7 @@ func getDatabaseURL() (string, error) {
 		password,
 		host,
 		port,
-		dbname), nil
+		dbname)
 }
 
 func (repository *CarRepository) AddCar(car model.Car) error {
