@@ -2,7 +2,6 @@ package main
 
 import (
 	"car/api/controller"
-	"car/api/stubs"
 	"car/infrastructure"
 	"car/logic/operations"
 	"flag"
@@ -26,7 +25,7 @@ func main() {
 
 	// Register the CarController with the server for handling it's routes
 	e := echo.New()
-	stubs.RegisterHandlers(e, &carsResource)
+	controller.RegisterHandlers(e, &carsResource)
 
 	// Start the server
 	var portNumber, err = strconv.Atoi(os.Getenv("PORT"))

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"car/api/stubs"
 	"car/logic/operations"
 	"errors"
 	"github.com/labstack/echo/v4"
@@ -18,7 +17,7 @@ func NewCarController(ops operations.CarOperations) CarController {
 
 // Route: POST /cars
 func (resource CarController) AddCar(ctx echo.Context) error {
-	var payload stubs.AddCarJSONRequestBody
+	var payload AddCarJSONRequestBody
 
 	err := ctx.Bind(&payload)
 	if err != nil {
@@ -53,7 +52,7 @@ func (resource CarController) GetCars(ctx echo.Context) error {
 }
 
 // Route: GET /cars/:vin
-func (resource CarController) GetCar(ctx echo.Context, vin stubs.Vin) error {
+func (resource CarController) GetCar(ctx echo.Context, vin Vin) error {
 	car, err := resource.ops.GetCar(vin)
 	if err != nil {
 		return err

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"car/infrastructure"
-	entities2 "car/infrastructure/persistenceentities"
+	"car/infrastructure/persistenceentities"
 	"car/logic/operations"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -32,7 +32,7 @@ var InvalidVins = []string{
 }
 
 // Create all resources used by the car controller with an underlying in-memory repository
-func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents map[string]entities2.CarPersistenceEntity) (CarController, operations.CarOperations, infrastructure.InMemoryRepository) {
+func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents map[string]persistenceentities.CarPersistenceEntity) (CarController, operations.CarOperations, infrastructure.InMemoryRepository) {
 	carRepository := infrastructure.InMemoryRepository{Cars: mockDatabaseContents}
 	carOperations := operations.NewCarOperations(&carRepository)
 	return NewCarController(carOperations), carOperations, carRepository
@@ -47,12 +47,12 @@ func TestAddCar(t *testing.T) {
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, carRepository := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{})
+	carsResource, _, carRepository := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{})
 
 	if assert.NoError(t, carsResource.AddCar(context)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
-		assert.Contains(t, carRepository.Cars, entities2.TestCarEntity.Vin.Vin)
-		assert.Equal(t, carRepository.Cars[entities2.TestCarEntity.Vin.Vin], entities2.TestCarEntity)
+		assert.Contains(t, carRepository.Cars, persistenceentities.TestCarEntity.Vin.Vin)
+		assert.Equal(t, carRepository.Cars[persistenceentities.TestCarEntity.Vin.Vin], persistenceentities.TestCarEntity)
 	}
 }
 
@@ -65,8 +65,8 @@ func TestAddCarWithExistingVin(t *testing.T) {
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{
-		"JH4DB1561NS000565": entities2.TestCarEntity,
+	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{
+		"JH4DB1561NS000565": persistenceentities.TestCarEntity,
 	})
 
 	assert.Error(t, carsResource.AddCar(context))
@@ -83,8 +83,8 @@ func TestAddCarInvalidVin(t *testing.T) {
 		}
 		`,
 			invalidVin,
-			entities2.TestCarEntity.Brand,
-			entities2.TestCarEntity.Model)
+			persistenceentities.TestCarEntity.Brand,
+			persistenceentities.TestCarEntity.Model)
 
 		context, request, _ := CreateMockEcho(
 			http.MethodPost,
@@ -93,7 +93,7 @@ func TestAddCarInvalidVin(t *testing.T) {
 		)
 		request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-		carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{})
+		carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{})
 
 		assert.Error(t, carsResource.AddCar(context))
 	}
@@ -107,8 +107,8 @@ func TestAddCarNoVin(t *testing.T) {
 		"model": "%s"
 	}
 	`,
-		entities2.TestCarEntity.Brand,
-		entities2.TestCarEntity.Model)
+		persistenceentities.TestCarEntity.Brand,
+		persistenceentities.TestCarEntity.Model)
 
 	context, request, _ := CreateMockEcho(
 		http.MethodPost,
@@ -117,7 +117,7 @@ func TestAddCarNoVin(t *testing.T) {
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{})
+	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{})
 
 	assert.Error(t, carsResource.AddCar(context))
 }
@@ -130,8 +130,8 @@ func TestAddCarNoBrand(t *testing.T) {
 		"model": "%s"
 	}
 	`,
-		entities2.TestCarEntity.Vin.Vin,
-		entities2.TestCarEntity.Model)
+		persistenceentities.TestCarEntity.Vin.Vin,
+		persistenceentities.TestCarEntity.Model)
 
 	context, request, _ := CreateMockEcho(
 		http.MethodPost,
@@ -140,7 +140,7 @@ func TestAddCarNoBrand(t *testing.T) {
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{})
+	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{})
 
 	assert.Error(t, carsResource.AddCar(context))
 }
@@ -153,8 +153,8 @@ func TestAddCarNoModel(t *testing.T) {
 		"brand": "%s"
 	}
 	`,
-		entities2.TestCarEntity.Vin.Vin,
-		entities2.TestCarEntity.Brand)
+		persistenceentities.TestCarEntity.Vin.Vin,
+		persistenceentities.TestCarEntity.Brand)
 
 	context, request, _ := CreateMockEcho(
 		http.MethodPost,
@@ -163,7 +163,7 @@ func TestAddCarNoModel(t *testing.T) {
 	)
 	request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{})
+	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{})
 
 	assert.Error(t, carsResource.AddCar(context))
 }
@@ -177,13 +177,13 @@ func TestGetCar(t *testing.T) {
 	)
 	context.SetPath("/:vin")
 	context.SetParamNames("vin")
-	context.SetParamValues(entities2.TestCarEntity.Vin.Vin)
+	context.SetParamValues(persistenceentities.TestCarEntity.Vin.Vin)
 
-	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{
-		"JH4DB1561NS000565": entities2.TestCarEntity,
+	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{
+		"JH4DB1561NS000565": persistenceentities.TestCarEntity,
 	})
 
-	if assert.NoError(t, carsResource.GetCar(context, entities2.TestCarEntity.Vin.Vin)) {
+	if assert.NoError(t, carsResource.GetCar(context, persistenceentities.TestCarEntity.Vin.Vin)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 		assert.Equal(t, CarBodyResponse, recorder.Body.String())
 	}
@@ -198,13 +198,13 @@ func TestGetCars(t *testing.T) {
 	)
 	context.SetPath("/:vin")
 	context.SetParamNames("vin")
-	context.SetParamValues(entities2.TestCarEntity.Vin.Vin)
+	context.SetParamValues(persistenceentities.TestCarEntity.Vin.Vin)
 
-	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]entities2.CarPersistenceEntity{
-		"JH4DB1561NS000565": entities2.TestCarEntity,
-		"JN8AZ2NC5B9300256": entities2.TestCarEntity,
-		"2FDKF38G3KCA42390": entities2.TestCarEntity,
-		"1GBJK39DX6E165432": entities2.TestCarEntity,
+	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{
+		"JH4DB1561NS000565": persistenceentities.TestCarEntity,
+		"JN8AZ2NC5B9300256": persistenceentities.TestCarEntity,
+		"2FDKF38G3KCA42390": persistenceentities.TestCarEntity,
+		"1GBJK39DX6E165432": persistenceentities.TestCarEntity,
 	})
 
 	if assert.NoError(t, carsResource.GetCars(context)) {
