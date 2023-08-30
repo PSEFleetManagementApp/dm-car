@@ -14,13 +14,13 @@ import (
 func main() {
 	// Create the PostgresRepository
 	// This also establishes the connection to the database
-	databaseRepository := infrastructure.NewDatabaseRepository()
-	// Close the connection to the database when databaseRepository goes out of scope
+	postgresRepository := infrastructure.NewPostgresRepository()
+	// Close the connection to the database when postgresRepository goes out of scope
 	// This happens when the program exists
-	defer databaseRepository.Close()
+	defer postgresRepository.Close()
 
 	// Create the CarOperations and the CarController
-	carOperations := operations.NewCarOperations(databaseRepository)
+	carOperations := operations.NewCarOperations(postgresRepository)
 	carsResource := controller.NewCarController(carOperations)
 
 	// Register the CarController with the server for handling it's routes

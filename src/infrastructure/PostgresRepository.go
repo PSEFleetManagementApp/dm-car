@@ -27,7 +27,7 @@ type PostgresRepository struct {
 	databaseConnection PGXInterface
 }
 
-func NewDatabaseRepository() *PostgresRepository {
+func NewPostgresRepository() *PostgresRepository {
 	connection, err := createDatabaseConnection()
 	if err != nil {
 		panic(err)
