@@ -1,8 +1,8 @@
 package infrastructure
 
 import (
-	entities2 "car/src/infrastructure/entities"
 	"car/src/infrastructure/mappers"
+	entities2 "car/src/infrastructure/persistenceentities"
 	model2 "car/src/logic/model"
 	"context"
 	"database/sql"

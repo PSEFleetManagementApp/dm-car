@@ -1,4 +1,4 @@
-package entities
+package persistenceentities
 
 // Car model for persistence
 type CarPersistenceEntity struct {

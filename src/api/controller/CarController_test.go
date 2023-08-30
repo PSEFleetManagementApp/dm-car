@@ -2,7 +2,7 @@ package controller
 
 import (
 	"car/src/infrastructure"
-	entities2 "car/src/infrastructure/entities"
+	entities2 "car/src/infrastructure/persistenceentities"
 	"car/src/logic/operations"
 	"fmt"
 	"net/http"

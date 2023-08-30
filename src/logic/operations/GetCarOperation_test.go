@@ -2,8 +2,8 @@ package operations
 
 import (
 	"car/src/infrastructure"
-	entities2 "car/src/infrastructure/entities"
 	"car/src/infrastructure/mappers"
+	entities2 "car/src/infrastructure/persistenceentities"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

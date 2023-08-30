@@ -1,7 +1,7 @@
 package mappers
 
 import (
-	entities2 "car/src/infrastructure/entities"
+	entities2 "car/src/infrastructure/persistenceentities"
 	model2 "car/src/logic/model"
 )
 
