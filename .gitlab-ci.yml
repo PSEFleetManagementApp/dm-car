@@ -12,5 +12,3 @@ include:
   - project: kit/cm/teaching/umedocumentation/cicd/pipeline
     ref: "1"
     file : go.yaml
-  - local: 'variables.yaml'
-
