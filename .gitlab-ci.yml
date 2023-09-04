@@ -7,8 +7,5 @@ include:
     ref: "1"
     file : image.yaml
   - project: kit/cm/teaching/engineeringknowledge/cicd/pipeline
-    ref: "1"
-    file : argocd-deploy.yaml
-  - project: kit/cm/teaching/engineeringknowledge/cicd/pipeline
     ref: "golang-src-folder"
     file : go.yaml
