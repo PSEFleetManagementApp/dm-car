@@ -9,3 +9,5 @@ include:
   - project: kit/cm/teaching/engineeringknowledge/cicd/pipeline
     ref: "1"
     file : go.yaml
+variables:
+  DEV_NAME: maxmustermann
