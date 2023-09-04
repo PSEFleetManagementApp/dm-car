@@ -7,5 +7,5 @@ include:
     ref: "1"
     file : image.yaml
   - project: kit/cm/teaching/engineeringknowledge/cicd/pipeline
-    ref: "golang-src-folder"
+    ref: "1"
     file : go.yaml
