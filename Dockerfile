@@ -19,7 +19,7 @@ RUN go test -v ./... || true
 # ==================
 # OPTIMIZATION STAGE
 # ==================
-FROM build AS optimize
+FROM test AS optimize
 
 RUN apk --no-cache add binutils
 RUN strip main
