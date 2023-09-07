@@ -10,4 +10,4 @@ include:
     ref: "1"
     file : go.yaml
 variables:
-  DEV_NAME: maxmustermann
+  DEV_ACCOUNT: uabcd
