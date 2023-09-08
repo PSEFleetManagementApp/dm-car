@@ -32,7 +32,7 @@ func NewPostgresRepository() *PostgresRepository {
 func createDatabaseConnection() (*gorm.DB, error) {
 	dsn := getDatabaseConnectionString()
 	databaseConnection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +40,8 @@ func createDatabaseConnection() (*gorm.DB, error) {
 	return databaseConnection, nil
 }
 
-// The database url for Postgres is of the format:
-// postgres://USER:PASSWORD@HOST:PORT/DB_NAME
+// The DSN string for GORM is of the format:
+// host=HOST user=USER password=PASSWORD dbname=DB_NAME port=PORT sslmode=disable
 func getDatabaseConnectionString() string {
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
@@ -70,7 +70,7 @@ func (repository *PostgresRepository) GetCars() (model.Cars, error) {
 	if result.Error != nil {
 		return model.Cars{}, result.Error
 	}
-	return mappers.ConvertCarsPersistenceEntityToCars(cars), nil
+	return mappers.ConvertCarPersistenceEntitiesToCars(cars), nil
 }
 
 func (repository *PostgresRepository) GetCar(vin model.Vin) (model.Car, error) {

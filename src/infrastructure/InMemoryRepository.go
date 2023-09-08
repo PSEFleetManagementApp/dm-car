@@ -26,7 +26,7 @@ func (repository *InMemoryRepository) GetCars() (model.Cars, error) {
 	for _, value := range repository.Cars {
 		cars = append(cars, value)
 	}
-	return mappers.ConvertCarsPersistenceEntityToCars(cars), nil
+	return mappers.ConvertCarPersistenceEntitiesToCars(cars), nil
 }
 
 func (repository *InMemoryRepository) GetCar(vin model.Vin) (model.Car, error) {

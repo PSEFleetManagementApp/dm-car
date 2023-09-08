@@ -22,8 +22,8 @@ func TestConvertCarPersistenceEntityToCar(t *testing.T) {
 	assert.Equal(t, persistenceentities.TestCarEntity.Model, carModel.Model)
 }
 
-func TestConvertCarsToCarsPersistenceEntity(t *testing.T) {
-	carsPersistenceEntity := ConvertCarsToCarsPersistenceEntity(model.TestCarsModel)
+func TestConvertCarsToCarPersistenceEntities(t *testing.T) {
+	carsPersistenceEntity := ConvertCarsToCarPersistenceEntities(model.TestCarsModel)
 	for index, value := range model.TestCarsModel.Cars {
 		assert.Equal(t, value.Vin.Vin, carsPersistenceEntity[index].Vin)
 		assert.Equal(t, value.Brand, carsPersistenceEntity[index].Brand)
@@ -31,8 +31,8 @@ func TestConvertCarsToCarsPersistenceEntity(t *testing.T) {
 	}
 }
 
-func TestConvertCarsPersistenceEntityToCars(t *testing.T) {
-	carsModel := ConvertCarsPersistenceEntityToCars(persistenceentities.TestCarsEntity)
+func TestConvertCarPersistenceEntitiesToCars(t *testing.T) {
+	carsModel := ConvertCarPersistenceEntitiesToCars(persistenceentities.TestCarsEntity)
 	for index, value := range persistenceentities.TestCarsEntity {
 		assert.Equal(t, value.Vin, carsModel.Cars[index].Vin.Vin)
 		assert.Equal(t, value.Brand, carsModel.Cars[index].Brand)

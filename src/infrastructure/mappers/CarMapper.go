@@ -21,7 +21,7 @@ func ConvertCarPersistenceEntityToCar(carPersistenceEntity persistenceentities.C
 	}
 }
 
-func ConvertCarsToCarsPersistenceEntity(cars model.Cars) []persistenceentities.CarPersistenceEntity {
+func ConvertCarsToCarPersistenceEntities(cars model.Cars) []persistenceentities.CarPersistenceEntity {
 	carsPersistenceEntity := []persistenceentities.CarPersistenceEntity{}
 	for _, car := range cars.Cars {
 		carsPersistenceEntity = append(
@@ -31,7 +31,7 @@ func ConvertCarsToCarsPersistenceEntity(cars model.Cars) []persistenceentities.C
 	return carsPersistenceEntity
 }
 
-func ConvertCarsPersistenceEntityToCars(carsPersistenceEntity []persistenceentities.CarPersistenceEntity) model.Cars {
+func ConvertCarPersistenceEntitiesToCars(carsPersistenceEntity []persistenceentities.CarPersistenceEntity) model.Cars {
 	cars := model.Cars{
 		Cars: []model.Car{},
 	}
