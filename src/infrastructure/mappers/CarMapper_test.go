@@ -10,14 +10,14 @@ import (
 
 func TestConvertCarToCarPersistenceEntity(t *testing.T) {
 	carPersistenceEntity := ConvertCarToCarPersistenceEntity(model.TestCarModel)
-	assert.Equal(t, model.TestCarModel.Vin.Vin, carPersistenceEntity.Vin.Vin)
+	assert.Equal(t, model.TestCarModel.Vin.Vin, carPersistenceEntity.Vin)
 	assert.Equal(t, model.TestCarModel.Brand, carPersistenceEntity.Brand)
 	assert.Equal(t, model.TestCarModel.Model, carPersistenceEntity.Model)
 }
 
 func TestConvertCarPersistenceEntityToCar(t *testing.T) {
 	carModel := ConvertCarPersistenceEntityToCar(persistenceentities.TestCarEntity)
-	assert.Equal(t, persistenceentities.TestCarEntity.Vin.Vin, carModel.Vin.Vin)
+	assert.Equal(t, persistenceentities.TestCarEntity.Vin, carModel.Vin.Vin)
 	assert.Equal(t, persistenceentities.TestCarEntity.Brand, carModel.Brand)
 	assert.Equal(t, persistenceentities.TestCarEntity.Model, carModel.Model)
 }
@@ -25,16 +25,16 @@ func TestConvertCarPersistenceEntityToCar(t *testing.T) {
 func TestConvertCarsToCarsPersistenceEntity(t *testing.T) {
 	carsPersistenceEntity := ConvertCarsToCarsPersistenceEntity(model.TestCarsModel)
 	for index, value := range model.TestCarsModel.Cars {
-		assert.Equal(t, value.Vin.Vin, carsPersistenceEntity.Cars[index].Vin.Vin)
-		assert.Equal(t, value.Brand, carsPersistenceEntity.Cars[index].Brand)
-		assert.Equal(t, value.Model, carsPersistenceEntity.Cars[index].Model)
+		assert.Equal(t, value.Vin.Vin, carsPersistenceEntity[index].Vin)
+		assert.Equal(t, value.Brand, carsPersistenceEntity[index].Brand)
+		assert.Equal(t, value.Model, carsPersistenceEntity[index].Model)
 	}
 }
 
 func TestConvertCarsPersistenceEntityToCars(t *testing.T) {
 	carsModel := ConvertCarsPersistenceEntityToCars(persistenceentities.TestCarsEntity)
-	for index, value := range persistenceentities.TestCarsEntity.Cars {
-		assert.Equal(t, value.Vin.Vin, carsModel.Cars[index].Vin.Vin)
+	for index, value := range persistenceentities.TestCarsEntity {
+		assert.Equal(t, value.Vin, carsModel.Cars[index].Vin.Vin)
 		assert.Equal(t, value.Brand, carsModel.Cars[index].Brand)
 		assert.Equal(t, value.Model, carsModel.Cars[index].Model)
 	}

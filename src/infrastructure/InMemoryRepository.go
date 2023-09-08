@@ -22,11 +22,9 @@ func (repository *InMemoryRepository) AddCar(car model.Car) error {
 }
 
 func (repository *InMemoryRepository) GetCars() (model.Cars, error) {
-	cars := persistenceentities.CarsPersistenceEntity{
-		Cars: []persistenceentities.CarPersistenceEntity{},
-	}
+	cars := []persistenceentities.CarPersistenceEntity{}
 	for _, value := range repository.Cars {
-		cars.Cars = append(cars.Cars, value)
+		cars = append(cars, value)
 	}
 	return mappers.ConvertCarsPersistenceEntityToCars(cars), nil
 }

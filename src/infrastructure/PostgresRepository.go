@@ -4,140 +4,79 @@ import (
 	"car/infrastructure/mappers"
 	"car/infrastructure/persistenceentities"
 	"car/logic/model"
-	"context"
-	"database/sql"
-	"errors"
 	"fmt"
-	"github.com/jackc/pgx/v4"
 	"os"
 
-	"github.com/jackc/pgconn"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-// A common interface for the real and mocked database connection
-type PGXInterface interface {
-	Ping(ctx context.Context) error
-	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
-	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
-	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
-	Close(ctx context.Context) error
-}
-
 type PostgresRepository struct {
-	databaseConnection PGXInterface
+	databaseConnection *gorm.DB
 }
 
 func NewPostgresRepository() *PostgresRepository {
-	connection, err := createDatabaseConnection()
+	databaseConnection, err := createDatabaseConnection()
 	if err != nil {
 		panic(err)
 	}
-	return &PostgresRepository{connection}
+
+	databaseConnection.AutoMigrate(
+		&persistenceentities.CarPersistenceEntity{},
+	)
+
+	return &PostgresRepository{databaseConnection}
 }
 
 // Establish a connection to the database
-func createDatabaseConnection() (PGXInterface, error) {
-	url := getDatabaseURL()
-	// Create the actual connection to the database
-	connection, err := pgx.Connect(context.Background(), url)
+func createDatabaseConnection() (*gorm.DB, error) {
+	dsn := getDatabaseConnectionString()
+	databaseConnection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	
 	if err != nil {
 		return nil, err
 	}
-	// Ping the database to confirm that the connection works
-	err = connection.Ping(context.Background())
-	if err != nil {
-		return nil, err
-	}
-	return connection, nil
+
+	return databaseConnection, nil
 }
 
-// The database url is of the format:
+// The database url for Postgres is of the format:
 // postgres://USER:PASSWORD@HOST:PORT/DB_NAME
-func getDatabaseURL() string {
+func getDatabaseConnectionString() string {
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
 	user := os.Getenv("POSTGRES_USER")
 	password := os.Getenv("POSTGRES_PASSWORD")
 	dbname := os.Getenv("POSTGRES_NAME")
 
-	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+	gormDSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		host,
 		user,
 		password,
-		host,
-		port,
-		dbname)
+		dbname,
+		port)
+	return gormDSN
 }
 
 func (repository *PostgresRepository) AddCar(car model.Car) error {
 	carPersistenceEntity := mappers.ConvertCarToCarPersistenceEntity(car)
-	statement := fmt.Sprintf(`
-		INSERT INTO public."Car" (vin, brand, model)
-		VALUES ('%s', '%s', '%s')
-	`,
-		carPersistenceEntity.Vin.Vin,
-		carPersistenceEntity.Brand,
-		carPersistenceEntity.Model)
-	// Exec performs mutations on the database
-	_, err := repository.databaseConnection.Exec(context.Background(), statement)
-	return err
+	result := repository.databaseConnection.Create(&carPersistenceEntity)
+	return result.Error
 }
 
 func (repository *PostgresRepository) GetCars() (model.Cars, error) {
-	statement := `
-		SELECT *
-		FROM public."Car"
-	`
-	// Query can return multiple rows as a result
-	rows, err := repository.databaseConnection.Query(context.Background(), statement)
-	if err != nil {
-		return model.Cars{}, err
-	}
-	// Rows are a resource that need to be closed so that they can be free'd from memory
-	defer rows.Close()
 	cars := []persistenceentities.CarPersistenceEntity{}
-	for rows.Next() {
-		car := persistenceentities.CarPersistenceEntity{}
-		vin := persistenceentities.VinPersistenceEntity{}
-		err = rows.Scan(&vin.Vin, &car.Brand, &car.Model)
-		if err != nil {
-			return model.Cars{}, err
-		}
-		car.Vin = vin
-		cars = append(cars, car)
+	result := repository.databaseConnection.Find(&cars)
+	if result.Error != nil {
+		return model.Cars{}, result.Error
 	}
-	err = rows.Err()
-	if err != nil {
-		return model.Cars{}, err
-	}
-	var result = mappers.ConvertCarsPersistenceEntityToCars(persistenceentities.CarsPersistenceEntity{
-		Cars: cars,
-	})
-	return result, nil
+	return mappers.ConvertCarsPersistenceEntityToCars(cars), nil
 }
 
 func (repository *PostgresRepository) GetCar(vin model.Vin) (model.Car, error) {
 	car := persistenceentities.CarPersistenceEntity{}
-	vinObject := persistenceentities.VinPersistenceEntity{}
-	statement := fmt.Sprintf(`
-		SELECT *
-		FROM public."Car"
-		WHERE vin LIKE '%s'
-	`, vin.Vin)
-	// QueryRow only returns a single row as a result
-	// A single row does not need to be closed
-	row := repository.databaseConnection.QueryRow(context.Background(), statement)
-	switch err := row.Scan(&vinObject.Vin, &car.Model, &car.Brand); err {
-	case sql.ErrNoRows:
-		return model.Car{}, errors.New("no car has the specified VIN")
-	case nil:
-		car.Vin = vinObject
-		return mappers.ConvertCarPersistenceEntityToCar(car), nil
-	default:
-		return model.Car{}, errors.New("DatabaseConnection.FindByVin: Unknown error")
-	}
-}
-
-// The PostgresRepository is responsible for closing the database connection
-func (repository *PostgresRepository) Close() error {
-	return repository.databaseConnection.Close(context.Background())
+	result := repository.databaseConnection.Where(&persistenceentities.CarPersistenceEntity{
+		Vin: vin.Vin,
+	}).First(&car)
+	return mappers.ConvertCarPersistenceEntityToCar(car), result.Error
 }
