@@ -9,4 +9,4 @@ include:
     ref: "1"
     file : go.yaml
 variables:
-  DEV_ACCOUNT: uabcd
+  DEV_ACCOUNT: uxxxx
