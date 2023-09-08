@@ -1,4 +1,3 @@
-# Note that the prefix in the npm commands forces npm to use the src folder.
 include:
   - project: kit/cm/teaching/engineeringknowledge/cicd/pipeline
     ref: "1"
