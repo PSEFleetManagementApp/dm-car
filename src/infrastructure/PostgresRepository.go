@@ -58,7 +58,7 @@ func getDatabaseURL() string {
 	port := os.Getenv("POSTGRES_PORT")
 	user := os.Getenv("POSTGRES_USER")
 	password := os.Getenv("POSTGRES_PASSWORD")
-	dbname := os.Getenv("POSTGRES_NAME")
+	dbname := os.Getenv("POSTGRES_DATABASE")
 
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		user,

@@ -28,7 +28,12 @@ func main() {
 	controller.RegisterHandlers(e, &carsResource)
 
 	// Start the server
-	var portNumber, err = strconv.Atoi(os.Getenv("PORT"))
+	portEnv := os.Getenv("PORT")
+	if portEnv == "" {
+		portEnv = "80"
+	}
+
+	var portNumber, err = strconv.Atoi(portEnv)
 	if err != nil {
 		e.Logger.Fatal("The port number configuration is incorrect. Did you set the environment variable PORT?")
 	}

@@ -27,7 +27,7 @@ POSTGRES_HOST // Address of the database
 POSTGRES_PORT // Port of the database
 POSTGRES_USER // User to access the database
 POSTGRES_PASSWORD // Password of the database user
-POSTGRES_NAME // Name of the database
+POSTGRES_DATABASE // Name of the database
 ```
 
 ## Run DM-Car
