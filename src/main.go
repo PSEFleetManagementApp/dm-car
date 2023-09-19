@@ -15,9 +15,6 @@ func main() {
 	// Create the PostgresRepository
 	// This also establishes the connection to the database
 	postgresRepository := infrastructure.NewPostgresRepository()
-	// Close the connection to the database when postgresRepository goes out of scope
-	// This happens when the program exists
-	defer postgresRepository.Close()
 
 	// Create the CarOperations and the CarController
 	carOperations := operations.NewCarOperations(postgresRepository)

@@ -7,7 +7,7 @@ import (
 
 func ConvertCarToCarPersistenceEntity(car model.Car) persistenceentities.CarPersistenceEntity {
 	return persistenceentities.CarPersistenceEntity{
-		Vin:   persistenceentities.VinPersistenceEntity{Vin: car.Vin.Vin},
+		Vin:   car.Vin.Vin,
 		Brand: car.Brand,
 		Model: car.Model,
 	}
@@ -15,29 +15,27 @@ func ConvertCarToCarPersistenceEntity(car model.Car) persistenceentities.CarPers
 
 func ConvertCarPersistenceEntityToCar(carPersistenceEntity persistenceentities.CarPersistenceEntity) model.Car {
 	return model.Car{
-		Vin:   model.Vin{Vin: carPersistenceEntity.Vin.Vin},
+		Vin:   model.Vin{Vin: carPersistenceEntity.Vin},
 		Brand: carPersistenceEntity.Brand,
 		Model: carPersistenceEntity.Model,
 	}
 }
 
-func ConvertCarsToCarsPersistenceEntity(cars model.Cars) persistenceentities.CarsPersistenceEntity {
-	carsPersistenceEntity := persistenceentities.CarsPersistenceEntity{
-		Cars: []persistenceentities.CarPersistenceEntity{},
-	}
+func ConvertCarsToCarPersistenceEntities(cars model.Cars) []persistenceentities.CarPersistenceEntity {
+	carsPersistenceEntity := []persistenceentities.CarPersistenceEntity{}
 	for _, car := range cars.Cars {
-		carsPersistenceEntity.Cars = append(
-			carsPersistenceEntity.Cars,
+		carsPersistenceEntity = append(
+			carsPersistenceEntity,
 			ConvertCarToCarPersistenceEntity(car))
 	}
 	return carsPersistenceEntity
 }
 
-func ConvertCarsPersistenceEntityToCars(carsPersistenceEntity persistenceentities.CarsPersistenceEntity) model.Cars {
+func ConvertCarPersistenceEntitiesToCars(carsPersistenceEntity []persistenceentities.CarPersistenceEntity) model.Cars {
 	cars := model.Cars{
 		Cars: []model.Car{},
 	}
-	for _, carPersistenceEntity := range carsPersistenceEntity.Cars {
+	for _, carPersistenceEntity := range carsPersistenceEntity {
 		cars.Cars = append(
 			cars.Cars,
 			ConvertCarPersistenceEntityToCar(carPersistenceEntity))

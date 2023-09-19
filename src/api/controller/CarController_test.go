@@ -5,10 +5,11 @@ import (
 	"car/infrastructure/persistenceentities"
 	"car/logic/operations"
 	"fmt"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/labstack/echo/v4"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +21,7 @@ var CarBodyRequest = "{\"Vin\":\"JH4DB1561NS000565\",\"Brand\":\"VW\",\"Model\":
 var CarBodyResponse = "{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"}\n"
 
 // A valid response body for Cars
-var CarsBody = "{\"Cars\":[{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"JN8AZ2NC5B9300256\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"2FDKF38G3KCA42390\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"1GBJK39DX6E165432\"},\"Brand\":\"VW\",\"Model\":\"ID2\"}]}\n"
+var CarsBody = "{\"Cars\":[{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"},{\"Vin\":{\"Vin\":\"JH4DB1561NS000565\"},\"Brand\":\"VW\",\"Model\":\"ID2\"}]}\n"
 
 // List of invalid Vins according to the domain constraints
 var InvalidVins = []string{
@@ -51,8 +52,8 @@ func TestAddCar(t *testing.T) {
 
 	if assert.NoError(t, carsResource.AddCar(context)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
-		assert.Contains(t, carRepository.Cars, persistenceentities.TestCarEntity.Vin.Vin)
-		assert.Equal(t, carRepository.Cars[persistenceentities.TestCarEntity.Vin.Vin], persistenceentities.TestCarEntity)
+		assert.Contains(t, carRepository.Cars, persistenceentities.TestCarEntity.Vin)
+		assert.Equal(t, carRepository.Cars[persistenceentities.TestCarEntity.Vin], persistenceentities.TestCarEntity)
 	}
 }
 
@@ -130,7 +131,7 @@ func TestAddCarNoBrand(t *testing.T) {
 		"model": "%s"
 	}
 	`,
-		persistenceentities.TestCarEntity.Vin.Vin,
+		persistenceentities.TestCarEntity.Vin,
 		persistenceentities.TestCarEntity.Model)
 
 	context, request, _ := CreateMockEcho(
@@ -153,7 +154,7 @@ func TestAddCarNoModel(t *testing.T) {
 		"brand": "%s"
 	}
 	`,
-		persistenceentities.TestCarEntity.Vin.Vin,
+		persistenceentities.TestCarEntity.Vin,
 		persistenceentities.TestCarEntity.Brand)
 
 	context, request, _ := CreateMockEcho(
@@ -177,13 +178,13 @@ func TestGetCar(t *testing.T) {
 	)
 	context.SetPath("/:vin")
 	context.SetParamNames("vin")
-	context.SetParamValues(persistenceentities.TestCarEntity.Vin.Vin)
+	context.SetParamValues(persistenceentities.TestCarEntity.Vin)
 
 	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{
 		"JH4DB1561NS000565": persistenceentities.TestCarEntity,
 	})
 
-	if assert.NoError(t, carsResource.GetCar(context, persistenceentities.TestCarEntity.Vin.Vin)) {
+	if assert.NoError(t, carsResource.GetCar(context, persistenceentities.TestCarEntity.Vin)) {
 		assert.Equal(t, http.StatusOK, recorder.Code)
 		assert.Equal(t, CarBodyResponse, recorder.Body.String())
 	}
@@ -198,7 +199,7 @@ func TestGetCars(t *testing.T) {
 	)
 	context.SetPath("/:vin")
 	context.SetParamNames("vin")
-	context.SetParamValues(persistenceentities.TestCarEntity.Vin.Vin)
+	context.SetParamValues(persistenceentities.TestCarEntity.Vin)
 
 	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities.CarPersistenceEntity{
 		"JH4DB1561NS000565": persistenceentities.TestCarEntity,

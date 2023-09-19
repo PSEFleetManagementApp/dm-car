@@ -10,18 +10,8 @@
 
 ## Setting up the database and the connection to it
 
-1. Run this inside of a Postgres database:
-```sql
-CREATE TABLE IF NOT EXISTS public."Car"
-(
-    vin character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    brand character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    model character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT "Car_pkey" PRIMARY KEY (vin)
-)
-```
+Create the following environment variables for DM-Car:
 
-2. Create the following environment variables for DM-Car:
 ```env
 POSTGRES_HOST // Address of the database
 POSTGRES_PORT // Port of the database
