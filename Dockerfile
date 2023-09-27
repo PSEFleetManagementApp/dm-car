@@ -14,7 +14,7 @@ RUN go build -o main .
 # ==================
 FROM build AS test
 
-RUN go test -v ./... || true
+RUN go test -v ./...
 
 # ==================
 # OPTIMIZATION STAGE
