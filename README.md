@@ -1,9 +1,9 @@
-# DM-Car
+# DM-CarV1.1
 The domain microservice DM-Car copes with the heterogeneity of car APIs from different manufacturers.
 
-## API Specification DM-Car
+## API Specification DM-CarV1.1
 
-[API Specification](/src/api/specification/openapi.yaml)
+[API Specification DM-CarV1.1](/src/api/specification/openapi.yaml)
 
 ## Setting up the database and the connection to it
 
