@@ -1,21 +1,10 @@
-# DM-CarV1.1
+# DM-CarV2.0
 The domain microservice DM-Car copes with the heterogeneity of car APIs from different manufacturers.
 
-## API Specification DM-CarV1.1
+## API Specification DM-CarV2.0
 
-[API Specification DM-CarV1.1](/src/api/specification/openapi.yaml)
+[API Specification DM-CarV2.0](/src/api/specification/openapi.yaml)
 
-## Setting up the database and the connection to it
-
-Create the following environment variables for DM-Car:
-
-```env
-POSTGRES_HOST // Address of the database
-POSTGRES_PORT // Port of the database
-POSTGRES_USER // User to access the database
-POSTGRES_PASSWORD // Password of the database user
-POSTGRES_DATABASE // Name of the database
-```
 
 ## Run DM-Car
 
