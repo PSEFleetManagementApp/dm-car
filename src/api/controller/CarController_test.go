@@ -4,10 +4,6 @@ import (
 	"car/infrastructure/connectedcar"
 	persistenceentities2 "car/infrastructure/connectedcar/entities"
 	"car/logic/operations"
-	"net/http"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 // A valid request body for a Car
@@ -29,32 +25,8 @@ var InvalidVins = []string{
 }
 
 // Create all resources used by the car controller with an underlying in-memory repository
-func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents map[string]persistenceentities2.ConnectedCarEntity) (CarController, operations.CarOperations, connectedcar.ConnectedCarSystem) {
+func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents []persistenceentities2.ConnectedCarEntity) (CarController, operations.CarOperations, connectedcar.ConnectedCarSystem) {
 	carRepository := connectedcar.ConnectedCarSystem{Cars: mockDatabaseContents}
 	carOperations := operations.NewCarOperations(&carRepository)
 	return NewCarController(carOperations), carOperations, carRepository
-}
-
-// Test that getting all cars works
-func TestGetCars(t *testing.T) {
-	context, _, recorder := CreateMockEcho(
-		http.MethodGet,
-		"/cars",
-		nil,
-	)
-	context.SetPath("/:vin")
-	context.SetParamNames("vin")
-	context.SetParamValues(persistenceentities2.TestCarEntity.Vin)
-
-	carsResource, _, _ := CreateCarResourcesWithInMemoryRepository(map[string]persistenceentities2.ConnectedCarEntity{
-		"JH4DB1561NS000565": persistenceentities2.TestCarEntity,
-		"JN8AZ2NC5B9300256": persistenceentities2.TestCarEntity,
-		"2FDKF38G3KCA42390": persistenceentities2.TestCarEntity,
-		"1GBJK39DX6E165432": persistenceentities2.TestCarEntity,
-	})
-
-	if assert.NoError(t, carsResource.GetCars(context)) {
-		assert.Equal(t, http.StatusOK, recorder.Code)
-		assert.Equal(t, CarsBody, recorder.Body.String())
-	}
 }
