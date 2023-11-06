@@ -1,7 +1,7 @@
 package mappers
 
 import (
-	"car/infrastructure/persistenceentities"
+	"car/infrastructure/connectedcar/entities"
 	"car/logic/model"
 	"testing"
 
@@ -9,17 +9,17 @@ import (
 )
 
 func TestConvertCarToCarPersistenceEntity(t *testing.T) {
-	carPersistenceEntity := ConvertCarToCarPersistenceEntity(model.TestCarModel)
+	carPersistenceEntity := ConvertCarToConnectedCarEntity(model.TestCarModel)
 	assert.Equal(t, model.TestCarModel.Vin.Vin, carPersistenceEntity.Vin)
 	assert.Equal(t, model.TestCarModel.Brand, carPersistenceEntity.Brand)
 	assert.Equal(t, model.TestCarModel.Model, carPersistenceEntity.Model)
 }
 
 func TestConvertCarPersistenceEntityToCar(t *testing.T) {
-	carModel := ConvertCarPersistenceEntityToCar(persistenceentities.TestCarEntity)
-	assert.Equal(t, persistenceentities.TestCarEntity.Vin, carModel.Vin.Vin)
-	assert.Equal(t, persistenceentities.TestCarEntity.Brand, carModel.Brand)
-	assert.Equal(t, persistenceentities.TestCarEntity.Model, carModel.Model)
+	carModel := ConvertConnectedCarEntityToCar(entities.TestCarEntity)
+	assert.Equal(t, entities.TestCarEntity.Vin, carModel.Vin.Vin)
+	assert.Equal(t, entities.TestCarEntity.Brand, carModel.Brand)
+	assert.Equal(t, entities.TestCarEntity.Model, carModel.Model)
 }
 
 func TestConvertCarsToCarPersistenceEntities(t *testing.T) {
@@ -32,8 +32,8 @@ func TestConvertCarsToCarPersistenceEntities(t *testing.T) {
 }
 
 func TestConvertCarPersistenceEntitiesToCars(t *testing.T) {
-	carsModel := ConvertCarPersistenceEntitiesToCars(persistenceentities.TestCarsEntity)
-	for index, value := range persistenceentities.TestCarsEntity {
+	carsModel := ConvertCarPersistenceEntitiesToCars(entities.TestCarsEntity)
+	for index, value := range entities.TestCarsEntity {
 		assert.Equal(t, value.Vin, carsModel.Cars[index].Vin.Vin)
 		assert.Equal(t, value.Brand, carsModel.Cars[index].Brand)
 		assert.Equal(t, value.Model, carsModel.Cars[index].Model)

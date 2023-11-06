@@ -1,14 +1,14 @@
-package persistenceentities
+package entities
 
 // Collection of data for testing
 
-var TestCarEntity = CarPersistenceEntity{
+var TestCarEntity = ConnectedCarEntity{
 	Vin:   "JH4DB1561NS000565",
 	Brand: "VW",
 	Model: "ID2",
 }
 
-var TestCarsEntity = []CarPersistenceEntity{
+var TestCarsEntity = []ConnectedCarEntity{
 	{
 		Vin:   "JH4DB1561NS000565",
 		Brand: "VW",
