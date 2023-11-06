@@ -1,5 +1,5 @@
 # DM-CarV2.0
-The domain microservice DM-Car copes with the heterogeneity of car APIs from different manufacturers.
+The domain microservice DM-Car copes with the heterogeneity of car APIs from different manufacturers. The available cars provided by the ConnectedCarSystem can be modified through a [CSV file](src/infrastructure/connectedcar/cars.csv). 
 
 ## API Specification DM-CarV2.0
 
