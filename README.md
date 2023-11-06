@@ -3,7 +3,7 @@ The domain microservice DM-Car copes with the heterogeneity of car APIs from dif
 
 ## API Specification DM-CarV2.0
 
-[API Diagram DM-CARV2.0](https://gitlab.kit.edu/kit/cm/teaching/carrentalapp/carrentalappv2/doccarrentalappv2/-/blob/main/pages/ad_dm-car_v2.0.md)
+[API Diagram DM-CarV2.0](https://gitlab.kit.edu/kit/cm/teaching/carrentalapp/carrentalappv2/doccarrentalappv2/-/blob/main/pages/ad_dm-car_v2.0.md)
 
 [API Specification DM-CarV2.0](/src/api/specification/openapi.yaml)
 
