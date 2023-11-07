@@ -1,5 +1,5 @@
 # DM-CarV2.0
-The domain microservice DM-Car copes with the heterogeneity of car APIs from different manufacturers. The available cars provided by the ConnectedCarSystem can be modified through a [CSV file](src/infrastructure/connectedcar/cars.csv). 
+The domain microservice in its Version V2.0 enables the access to basic information of a car which is identified by its VIN. The information is provided via an external system ConnectedCar. In Version 2.0, the external system is  simulated by a [CSV file](src/infrastructure/connectedcar/cars.csv) file.
 
 ## API Specification DM-CarV2.0
 
