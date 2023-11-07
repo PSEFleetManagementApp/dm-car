@@ -11,7 +11,7 @@ import (
 
 // Test that the operation of getting an existing car by it's Vin works
 func TestGetCar(t *testing.T) {
-	carRepository := connectedcars.ConnectedCar{Cars: []persistenceentities2.ConnectedCarsEntity{
+	carRepository := connectedcars.ConnectedCars{Cars: []persistenceentities2.ConnectedCarsEntity{
 		0: persistenceentities2.TestCarEntity,
 	}}
 	carOperations := NewCarOperations(&carRepository)
