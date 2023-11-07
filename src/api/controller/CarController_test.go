@@ -25,7 +25,7 @@ var InvalidVins = []string{
 }
 
 // Create all resources used by the car controller with an underlying in-memory repository
-func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents []persistenceentities2.ConnectedCarsEntity) (CarController, operations.CarOperations, connectedcars.ConnectedCar) {
+func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents []persistenceentities2.ConnectedCarsEntity) (CarController, operations.CarOperations, connectedcars.ConnectedCars) {
 	carRepository := connectedcars.ConnectedCars{Cars: mockDatabaseContents}
 	carOperations := operations.NewCarOperations(&carRepository)
 	return NewCarController(carOperations), carOperations, carRepository
