@@ -14,7 +14,7 @@ type ConnectedCars struct {
 	Cars []entities.ConnectedCarsEntity
 }
 
-//go:embed cars.csv
+//go:embed ConnectedCars.csv
 var connectedCarCars []byte
 
 func NewConnectedCars() ConnectedCars {
