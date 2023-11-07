@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"car/infrastructure/connectedcar"
-	persistenceentities2 "car/infrastructure/connectedcar/entities"
+	"car/infrastructure/connectedcars"
+	persistenceentities2 "car/infrastructure/connectedcars/entities"
 	"car/logic/operations"
 )
 
@@ -25,8 +25,8 @@ var InvalidVins = []string{
 }
 
 // Create all resources used by the car controller with an underlying in-memory repository
-func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents []persistenceentities2.ConnectedCarEntity) (CarController, operations.CarOperations, connectedcar.ConnectedCarSystem) {
-	carRepository := connectedcar.ConnectedCarSystem{Cars: mockDatabaseContents}
+func CreateCarResourcesWithInMemoryRepository(mockDatabaseContents []persistenceentities2.ConnectedCarsEntity) (CarController, operations.CarOperations, connectedcars.ConnectedCar) {
+	carRepository := connectedcars.ConnectedCar{Cars: mockDatabaseContents}
 	carOperations := operations.NewCarOperations(&carRepository)
 	return NewCarController(carOperations), carOperations, carRepository
 }

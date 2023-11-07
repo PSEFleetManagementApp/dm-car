@@ -5,9 +5,9 @@ import (
 )
 
 type CarOperations struct {
-	repository model.ConnectedCarInterface
+	repository model.ConnectedCarsInterface
 }
 
-func NewCarOperations(repository model.ConnectedCarInterface) CarOperations {
+func NewCarOperations(repository model.ConnectedCarsInterface) CarOperations {
 	return CarOperations{repository: repository}
 }

@@ -1,5 +1,5 @@
 package model
 
-type ConnectedCarInterface interface {
+type ConnectedCarsInterface interface {
 	GetCar(vin Vin) (Car, error)
 }

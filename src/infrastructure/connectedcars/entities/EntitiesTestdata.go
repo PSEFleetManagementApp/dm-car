@@ -2,13 +2,13 @@ package entities
 
 // Collection of data for testing
 
-var TestCarEntity = ConnectedCarEntity{
+var TestCarEntity = ConnectedCarsEntity{
 	Vin:   "JH4DB1561NS000565",
 	Brand: "VW",
 	Model: "ID2",
 }
 
-var TestCarsEntity = []ConnectedCarEntity{
+var TestCarsEntity = []ConnectedCarsEntity{
 	{
 		Vin:   "JH4DB1561NS000565",
 		Brand: "VW",

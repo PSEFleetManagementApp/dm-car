@@ -2,7 +2,7 @@ package main
 
 import (
 	"car/api/controller"
-	"car/infrastructure/connectedcar"
+	"car/infrastructure/connectedcars"
 	"car/logic/operations"
 	"flag"
 	"fmt"
@@ -14,10 +14,10 @@ import (
 func main() {
 	// Create the PostgresRepository
 	// This also establishes the connection to the database
-	connectedCarSystem := connectedcar.NewConnectedCarSystem()
+	connectedCars := connectedcars.NewConnectedCars()
 
 	// Create the CarOperations and the CarController
-	carOperations := operations.NewCarOperations(connectedCarSystem)
+	carOperations := operations.NewCarOperations(connectedCars)
 	carsResource := controller.NewCarController(carOperations)
 
 	// Register the CarController with the server for handling it's routes
