@@ -6,7 +6,6 @@ import (
 	"car/logic/model"
 	_ "embed"
 	"errors"
-	"fmt"
 	"github.com/gocarina/gocsv"
 )
 
@@ -18,7 +17,6 @@ type ConnectedCars struct {
 var connectedCarCars []byte
 
 func NewConnectedCars() ConnectedCars {
-	fmt.Println(connectedCarCars)
 	var cars []entities.ConnectedCarsEntity
 	if err := gocsv.UnmarshalBytes(connectedCarCars, &cars); err != nil {
 		panic(err)
